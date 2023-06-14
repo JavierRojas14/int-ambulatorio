@@ -48,6 +48,10 @@ def hashear_columna_texto(serie_texto):
     return serie_hasheada
 
 
+def preprocesar_diagnostico(serie_diagnostico):
+    return serie_diagnostico.str.replace(".", "", regex=False).str.replace(" ", "", regex=False)
+
+
 @click.command()
 @click.argument("input_filepath", type=click.Path(exists=True))
 @click.argument("output_filepath", type=click.Path())
@@ -65,6 +69,7 @@ def main(input_filepath, output_filepath):
     )
 
     df.loc[:, COLS_A_HASHEAR] = df.loc[:, COLS_A_HASHEAR].apply(hashear_columna_texto)
+    df["Código Diagnóstico"] = preprocesar_diagnostico(df["Código Diagnóstico"])
     df.to_csv(output_filepath, encoding="latin-1", index=False, sep=";", errors="replace")
 
 
