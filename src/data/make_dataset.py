@@ -69,7 +69,7 @@ def main(input_filepath, output_filepath):
     )
 
     df.loc[:, COLS_A_HASHEAR] = df.loc[:, COLS_A_HASHEAR].apply(hashear_columna_texto)
-    df["Código Diagnóstico"] = preprocesar_diagnostico(df["Código Diagnóstico"])
+    df["Código Diagnóstico"] = preprocesar_diagnostico(df["Código Diagnóstico"].astype(str))
     df.to_csv(output_filepath, encoding="latin-1", index=False, sep=";", errors="replace")
 
 
