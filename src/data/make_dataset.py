@@ -49,7 +49,7 @@ def hashear_columna_texto(serie_texto):
 
 
 def preprocesar_diagnostico(serie_diagnostico):
-    return serie_diagnostico.str.replace(".| |_", "", regex=False)
+    return serie_diagnostico.str.replace("\.|\s|_", "", regex=True)
 
 @click.command()
 @click.argument("input_filepath", type=click.Path(exists=True))
