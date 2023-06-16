@@ -97,7 +97,8 @@ def main(input_filepath, output_filepath):
         "Nombre Diagnóstico",
         "Año",
     ]
-    columna_no_repetida = ["Detalle Atención"]
+    columna_no_repetida = "Detalle Atención"
+    df[columna_no_repetida] = df[columna_no_repetida].astype(str)
 
     df = unir_filas_repetidas(
         df, columnas_repetidas, columna_no_repetida
