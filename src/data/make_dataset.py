@@ -51,8 +51,15 @@ def hashear_columna_texto(serie_texto):
 def preprocesar_diagnostico(serie_diagnostico):
     return serie_diagnostico.str.replace("\.|\s|_", "", regex=True)
 
+
 def preprocesar_sexo(serie_sexo):
     return serie_sexo.str.strip().str.lower()
+
+
+def unir_filas_repetidas(df, columnas_repetidas, columna_distinta):
+    tmp = df.groupby(columnas_repetidas)[columna_distinta].apply(", ".join).reset_index()
+    return tmp
+
 
 @click.command()
 @click.argument("input_filepath", type=click.Path(exists=True))
@@ -73,6 +80,28 @@ def main(input_filepath, output_filepath):
     df.loc[:, COLS_A_HASHEAR] = df.loc[:, COLS_A_HASHEAR].apply(hashear_columna_texto)
     df["Código Diagnóstico"] = preprocesar_diagnostico(df["Código Diagnóstico"].astype(str))
     df["sexo"] = preprocesar_sexo(df["sexo"])
+
+    columnas_repetidas = [
+        "Código Reserva Atención",
+        "Rut Paciente",
+        "Nombre Paciente",
+        "Apellido Paterno Paciente",
+        "Apellido Materno Paciente",
+        "Fecha Nacimiento",
+        "sexo",
+        "Fecha Reserva",
+        "Fecha Atención",
+        "Rut Profesional",
+        "Nombre Especialidad",
+        "Código Diagnóstico",
+        "Nombre Diagnóstico",
+        "Año",
+    ]
+    columna_no_repetida = ["Detalle Atención"]
+
+    df = unir_filas_repetidas(
+        df, columnas_repetidas, columna_no_repetida
+    )
     df.to_csv(output_filepath, encoding="latin-1", index=False, sep=";", errors="replace")
 
 
