@@ -29,3 +29,28 @@ def agregar_rango_etario(df_procesada):
     )
 
     return tmp
+
+
+def obtener_dfs_para_desglose_sociodemografico(
+    df, vars_groupby_estatico, vars_groupby_dinamico, col_diagnostico
+):
+    dict_resultado = {}
+    cols_para_llave = vars_groupby_estatico + [col_diagnostico]
+    for variable in vars_groupby_dinamico:
+        nuevo_desglose = vars_groupby_estatico + [variable]
+        if variable == col_diagnostico:
+            nuevo_desglose.pop()
+
+        resultado = (
+            df.groupby(nuevo_desglose, dropna=True)[col_diagnostico]
+            .value_counts()
+            .reset_index(name="conteo")
+        )
+
+        resultado["llave_id"] = (
+            resultado[cols_para_llave].astype(str).apply(lambda x: "-".join(x), axis=1)
+        )
+
+        dict_resultado[variable] = resultado
+
+    return dict_resultado
