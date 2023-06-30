@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import hashlib
+import os
 import logging
 import glob
 from pathlib import Path
@@ -31,21 +32,31 @@ COLS_A_OCUPAR = {
 
 COLS_A_HASHEAR = [
     "Rut Paciente",
-    "Nombre Paciente",
-    "Apellido Paterno Paciente",
-    "Apellido Materno Paciente",
     "Rut Profesional",
 ]
 
+COLS_A_ELIMINAR = [
+    "Nombre Paciente",
+    "Apellido Paterno Paciente",
+    "Apellido Materno Paciente",
+]
 
-def hashear_columna_texto(serie_texto):
-    serie_hasheada = serie_texto.copy()
 
-    serie_hasheada = serie_hasheada.astype(str).apply(
-        lambda x: hashlib.sha512(x.encode()).hexdigest()
-    )
+def salted_sha256_anonymize(df, columns_to_anonymize):
+    anonymized_df = df.copy()
+    salts_df = pd.DataFrame()
 
-    return serie_hasheada
+    for column in columns_to_anonymize:
+        # Generate a random salt for each column
+        salt = os.urandom(16)
+        salts_df[column + "_Salt"] = [salt] * len(df)
+
+        # Pseudonymize the column values with salted SHA-256
+        anonymized_df[column] = df.apply(
+            lambda row: hashlib.sha256(salt + str(row[column]).encode()).hexdigest(), axis=1
+        )
+
+    return anonymized_df, salts_df
 
 
 def preprocesar_diagnostico(serie_diagnostico):
@@ -77,16 +88,14 @@ def main(input_filepath, output_filepath):
         )
     )
 
-    df.loc[:, COLS_A_HASHEAR] = df.loc[:, COLS_A_HASHEAR].apply(hashear_columna_texto)
+    df = df.drop(columns=COLS_A_ELIMINAR)
+
     df["Código Diagnóstico"] = preprocesar_diagnostico(df["Código Diagnóstico"].astype(str))
     df["sexo"] = preprocesar_sexo(df["sexo"])
 
     columnas_repetidas = [
         "Código Reserva Atención",
         "Rut Paciente",
-        "Nombre Paciente",
-        "Apellido Paterno Paciente",
-        "Apellido Materno Paciente",
         "Fecha Nacimiento",
         "sexo",
         "Fecha Reserva",
@@ -100,10 +109,15 @@ def main(input_filepath, output_filepath):
     columna_no_repetida = "Detalle Atención"
     df[columna_no_repetida] = df[columna_no_repetida].astype(str)
 
-    df = unir_filas_repetidas(
-        df, columnas_repetidas, columna_no_repetida
-    )
+    df = unir_filas_repetidas(df, columnas_repetidas, columna_no_repetida)
+
+    df, df_sales = salted_sha256_anonymize(df, COLS_A_HASHEAR)
+    df = df.rename(columns={"Rut Paciente": "ID_PACIENTE", "Rut Profesional": "ID_PROFESIONAL"})
+
     df.to_csv(output_filepath, encoding="latin-1", index=False, sep=";", errors="replace")
+    df_sales.to_csv(
+        "data/processed/salts.csv", encoding="latin-1", index=False, sep=";", errors="replace"
+    )
 
 
 if __name__ == "__main__":
