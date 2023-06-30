@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-import hashlib
-import os
-import logging
 import glob
+import hashlib
+import json
+import logging
+import os
+
+from datetime import datetime
 from pathlib import Path
 
-import pandas as pd
-from datetime import datetime
-
 import click
+import pandas as pd
 from dotenv import find_dotenv, load_dotenv
-
 
 COLS_A_OCUPAR = {
     "Código Reserva Atención": str,
@@ -44,19 +44,24 @@ COLS_A_ELIMINAR = [
 
 def salted_sha256_anonymize(df, columns_to_anonymize):
     anonymized_df = df.copy()
-    salts_df = pd.DataFrame()
+
+    salts = {}
 
     for column in columns_to_anonymize:
         # Generate a random salt for each column
         salt = os.urandom(16)
-        salts_df[column + "_Salt"] = [salt] * len(df)
+        salts[column] = salt.hex()
 
         # Pseudonymize the column values with salted SHA-256
         anonymized_df[column] = df.apply(
             lambda row: hashlib.sha256(salt + str(row[column]).encode()).hexdigest(), axis=1
         )
 
-    return anonymized_df, salts_df
+    # Save the salts to a JSON file
+    with open("data/processed/salts.json", 'w') as file:
+        json.dump(salts, file, indent=1)
+
+    return anonymized_df
 
 
 def preprocesar_diagnostico(serie_diagnostico):
@@ -110,14 +115,10 @@ def main(input_filepath, output_filepath):
     df[columna_no_repetida] = df[columna_no_repetida].astype(str)
 
     df = unir_filas_repetidas(df, columnas_repetidas, columna_no_repetida)
-
-    df, df_sales = salted_sha256_anonymize(df, COLS_A_HASHEAR)
+    df = salted_sha256_anonymize(df, COLS_A_HASHEAR)
     df = df.rename(columns={"Rut Paciente": "ID_PACIENTE", "Rut Profesional": "ID_PROFESIONAL"})
 
     df.to_csv(output_filepath, encoding="latin-1", index=False, sep=";", errors="replace")
-    df_sales.to_csv(
-        "data/processed/salts.csv", encoding="latin-1", index=False, sep=";", errors="replace"
-    )
 
 
 if __name__ == "__main__":
