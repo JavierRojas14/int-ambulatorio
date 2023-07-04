@@ -5,11 +5,11 @@ import numpy as np
 def formatear_fechas_ambulatorio(df_procesada):
     tmp = df_procesada.copy()
 
-    tmp["Fecha Nacimiento"] = pd.to_datetime(
-        tmp["Fecha Nacimiento"], errors="coerce", dayfirst=True
+    tmp["fecha_nacimiento"] = pd.to_datetime(
+        tmp["fecha_nacimiento"], errors="coerce", dayfirst=True
     )
-    tmp["Fecha Reserva"] = pd.to_datetime(tmp["Fecha Reserva"], yearfirst=True)
-    tmp["Fecha Atención"] = pd.to_datetime(tmp["Fecha Atención"], yearfirst=True)
+    tmp["fecha_reserva"] = pd.to_datetime(tmp["fecha_reserva"], yearfirst=True)
+    tmp["fecha_atencion"] = pd.to_datetime(tmp["fecha_atencion"], yearfirst=True)
 
     return tmp
 
@@ -17,14 +17,14 @@ def formatear_fechas_ambulatorio(df_procesada):
 def agregar_rango_etario(df_procesada):
     tmp = df_procesada.copy()
 
-    edad_primera_consulta = (tmp["Fecha Atención"] - tmp["Fecha Nacimiento"]) / np.timedelta64(
+    edad_primera_consulta = (tmp["fecha_atencion"] - tmp["fecha_nacimiento"]) / np.timedelta64(
         1, "Y"
     )
 
-    tmp["EDAD_PRIMERA_CONSULTA"] = edad_primera_consulta
+    tmp["edad_primera_consulta"] = edad_primera_consulta
     maxima_edad = int(round(max(edad_primera_consulta), 0))
 
-    tmp["RANGO_ETARIO_PRIMERA_CONSULTA"] = pd.cut(
+    tmp["rango_etario_primera_consulta"] = pd.cut(
         edad_primera_consulta, range(0, maxima_edad + 1, 10)
     )
 

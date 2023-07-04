@@ -109,6 +109,8 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
     df = unir_filas_repetidas(df, columnas_repetidas, columna_no_repetida)
     df = salted_sha256_anonymize(df, COLS_A_HASHEAR)
     df = df.rename(columns={"Rut Paciente": "ID_PACIENTE", "Rut Profesional": "ID_PROFESIONAL"})
+    df = clean_column_names(df)
+
     return df
 
 
