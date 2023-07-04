@@ -77,7 +77,7 @@ def unir_filas_repetidas(df, columnas_repetidas, columna_distinta):
     return tmp
 
 
-def leer_ambulatorio_diagnosticos(input_filepath):
+def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
     df = pd.concat(
         (
             pd.read_excel(archivo, usecols=COLS_A_OCUPAR.keys())
@@ -112,6 +112,53 @@ def leer_ambulatorio_diagnosticos(input_filepath):
     return df
 
 
+########################## Procedimientos ####################################
+
+
+def clean_column_names(df):
+    tmp = df.copy()
+
+    # Clean and transform the column names using vectorization
+    cleaned_columns = (
+        df.columns.str.lower()
+        .str.normalize("NFD")
+        .str.encode("ascii", "ignore")
+        .str.decode("utf-8")
+    )
+    cleaned_columns = cleaned_columns.str.replace(" ", "_")
+
+    # Assign the cleaned column names back to the DataFrame
+    tmp.columns = cleaned_columns
+
+    return tmp
+
+
+def leer_y_preprocesar_ambulatorio_procedimientos(input_filepath):
+    df = pd.concat(
+        (
+            pd.read_excel(archivo)
+            for archivo in glob.glob(f"{input_filepath}/procedimientos/*.xlsx")
+        )
+    ).drop(columns=["N°", "Nombre", "Médico"])
+
+    df = df.rename(columns={"Columna1": "unidad_que_la_realiza"})
+    df = clean_column_names(df)
+    df["rut"] = df.rut.str.lower().str.replace("\.|-|\s", "", regex=True)
+    df["rut_cortado"] = df.rut.str[:-1]
+
+    with open("data/processed/salts.json", encoding="utf-8") as file:
+        sales = json.load(file)
+        sal_rut = sales["Rut Paciente"]
+
+    df["id_paciente"] = (
+        bytes.fromhex(sal_rut) + df["rut_cortado"].str.encode(encoding="utf-8")
+    ).apply(lambda x: hashlib.sha256(x).hexdigest())
+
+    df = df.drop(columns=["rut", "rut_cortado"])
+
+    return df
+
+
 @click.command()
 @click.argument("input_filepath", type=click.Path(exists=True))
 @click.argument("output_filepath", type=click.Path())
@@ -121,9 +168,24 @@ def main(input_filepath, output_filepath):
     """
     logger = logging.getLogger(__name__)
     logger.info("making final data set from raw data")
-    df = leer_ambulatorio_diagnosticos(input_filepath)
 
-    df.to_csv(output_filepath, encoding="latin-1", index=False, sep=";", errors="replace")
+    df_diagnosticos = leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath)
+    df_procedimientos = leer_y_preprocesar_ambulatorio_procedimientos(input_filepath)
+
+    df_diagnosticos.to_csv(
+        f"{output_filepath}/datos_limpios_diagnosticos.csv",
+        encoding="latin-1",
+        index=False,
+        sep=";",
+        errors="replace",
+    )
+    df_procedimientos.to_csv(
+        f"{output_filepath}/datos_limpios_procedimientos.csv",
+        encoding="latin-1",
+        index=False,
+        sep=";",
+        errors="replace",
+    )
 
 
 if __name__ == "__main__":
