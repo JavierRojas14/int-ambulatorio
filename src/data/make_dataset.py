@@ -58,7 +58,7 @@ def salted_sha256_anonymize(df, columns_to_anonymize):
         )
 
     # Save the salts to a JSON file
-    with open("data/processed/salts.json", 'w') as file:
+    with open("data/processed/salts.json", "w") as file:
         json.dump(salts, file, indent=1)
 
     return anonymized_df
@@ -77,19 +77,11 @@ def unir_filas_repetidas(df, columnas_repetidas, columna_distinta):
     return tmp
 
 
-@click.command()
-@click.argument("input_filepath", type=click.Path(exists=True))
-@click.argument("output_filepath", type=click.Path())
-def main(input_filepath, output_filepath):
-    """Runs data processing scripts to turn raw data from (../raw) into
-    cleaned data ready to be analyzed (saved in ../processed).
-    """
-    logger = logging.getLogger(__name__)
-    logger.info("making final data set from raw data")
+def leer_ambulatorio_diagnosticos(input_filepath):
     df = pd.concat(
         (
             pd.read_excel(archivo, usecols=COLS_A_OCUPAR.keys())
-            for archivo in glob.glob(f"{input_filepath}/*.xlsx")
+            for archivo in glob.glob(f"{input_filepath}/diagnosticos/*.xlsx")
         )
     )
 
@@ -117,6 +109,19 @@ def main(input_filepath, output_filepath):
     df = unir_filas_repetidas(df, columnas_repetidas, columna_no_repetida)
     df = salted_sha256_anonymize(df, COLS_A_HASHEAR)
     df = df.rename(columns={"Rut Paciente": "ID_PACIENTE", "Rut Profesional": "ID_PROFESIONAL"})
+    return df
+
+
+@click.command()
+@click.argument("input_filepath", type=click.Path(exists=True))
+@click.argument("output_filepath", type=click.Path())
+def main(input_filepath, output_filepath):
+    """Runs data processing scripts to turn raw data from (../raw) into
+    cleaned data ready to be analyzed (saved in ../processed).
+    """
+    logger = logging.getLogger(__name__)
+    logger.info("making final data set from raw data")
+    df = leer_ambulatorio_diagnosticos(input_filepath)
 
     df.to_csv(output_filepath, encoding="latin-1", index=False, sep=";", errors="replace")
 
