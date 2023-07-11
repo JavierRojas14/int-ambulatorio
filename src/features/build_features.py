@@ -14,6 +14,15 @@ def formatear_fechas_ambulatorio(df_procesada):
     return tmp
 
 
+def formatear_fechas_procedimientos(df_procesada):
+    tmp = df_procesada.copy()
+    tmp["fecha_realizacion"] = pd.to_datetime(
+        tmp.fecha_realizacion, yearfirst=True, errors="coerce"
+    )
+
+    return tmp
+
+
 def agregar_rango_etario(df_procesada):
     tmp = df_procesada.copy()
 
@@ -29,6 +38,25 @@ def agregar_rango_etario(df_procesada):
     )
 
     return tmp
+
+
+def add_year_month_day(df, datetime_column):
+    """
+    Adds the year, month, and day columns to the dataframe.
+
+    Args:
+      df: The dataframe to add the columns to.
+      datetime_column: The name of the datetime column.
+
+    Returns:
+      The dataframe with the year, month, and day columns appended.
+    """
+
+    df["year"] = df[datetime_column].dt.year
+    df["month"] = df[datetime_column].dt.month
+    df["day"] = df[datetime_column].dt.day
+
+    return df
 
 
 def obtener_dfs_para_desglose_sociodemografico(
