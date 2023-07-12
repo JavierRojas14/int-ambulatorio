@@ -82,3 +82,12 @@ def obtener_dfs_para_desglose_sociodemografico(
         dict_resultado[variable] = resultado
 
     return dict_resultado
+
+def obtener_diag_mas_cercano(df_paciente, fecha_procedimiento):
+    diferencias_fecha = abs(fecha_procedimiento - df_paciente["fecha_atencion"])
+    indice_fecha_mas_cercana = diferencias_fecha[diferencias_fecha == min(diferencias_fecha)].index[
+        0
+    ]
+    diag_mas_cercano = df_paciente.loc[indice_fecha_mas_cercana, "codigo_diagnostico"]
+
+    return diag_mas_cercano
