@@ -79,6 +79,9 @@ def obtener_dfs_para_desglose_sociodemografico(
             resultado[cols_para_llave].astype(str).apply(lambda x: "-".join(x), axis=1)
         )
 
+        if variable != col_diagnostico:
+            resultado = resultado.drop(columns=cols_para_llave)
+
         dict_resultado[variable] = resultado
 
     return dict_resultado
