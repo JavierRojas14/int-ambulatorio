@@ -72,7 +72,7 @@ def obtener_dfs_para_desglose_sociodemografico(
         resultado = (
             df.groupby(nuevo_desglose, dropna=True)[col_diagnostico]
             .value_counts()
-            .reset_index(name="conteo")
+            .reset_index(name=f"conteo_{variable}")
         )
 
         resultado["llave_id"] = (
