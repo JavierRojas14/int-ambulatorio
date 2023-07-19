@@ -76,7 +76,7 @@ def obtener_dfs_para_desglose_sociodemografico(
         )
 
         resultado["llave_id"] = (
-            resultado[cols_para_llave].astype(str).apply(lambda x: "-".join(x), axis=1)
+            resultado[cols_para_llave].astype(str).apply("-".join, axis=1)
         )
 
         if variable != col_diagnostico:
