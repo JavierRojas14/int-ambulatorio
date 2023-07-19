@@ -186,7 +186,8 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
 
 def clean_column_names(df):
     """
-    Cleans the column names of a DataFrame by converting to lowercase and replacing spaces with underscores.
+    Cleans the column names of a DataFrame by converting to lowercase and replacing spaces with 
+    underscores.
 
     :param df: The input DataFrame.
     :type df: pandas DataFrame
