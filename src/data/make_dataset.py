@@ -137,16 +137,12 @@ def clean_column_names(df):
 
 def leer_y_preprocesar_ambulatorio_procedimientos(input_filepath):
     df = pd.concat(
-        (
-            pd.read_excel(archivo)
-            for archivo in glob.glob(f"{input_filepath}/procedimientos/*.xlsx")
-        )
+        (pd.read_excel(archivo) for archivo in glob.glob(f"{input_filepath}/procedimientos/*.xlsx"))
     ).drop(columns=["N°", "Nombre", "Médico"])
-
 
     df = df.rename(columns={"Columna1": "unidad_que_la_realiza"})
     df = clean_column_names(df)
-    df = df.query("`cerrado/abierto` == 'ABIERTA'").copy()
+    df = df.query("`cerrado/abierto` == 'ABIERTA'")
     df["rut"] = df.rut.str.lower().str.replace("\.|-|\s", "", regex=True)
     df["rut_cortado"] = df.rut.str[:-1]
 
