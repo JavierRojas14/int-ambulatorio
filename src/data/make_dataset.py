@@ -160,6 +160,9 @@ def leer_y_preprocesar_ambulatorio_procedimientos(input_filepath):
 
     df = df.drop(columns=["rut", "rut_cortado"])
 
+    cols_strings_sin_espacios = df.select_dtypes(include="object").apply(lambda x: x.str.strip())
+    df.loc[:, cols_strings_sin_espacios.columns] = cols_strings_sin_espacios
+
     return df
 
 
