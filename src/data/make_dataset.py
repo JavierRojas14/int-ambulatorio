@@ -146,7 +146,7 @@ def leer_y_preprocesar_ambulatorio_procedimientos(input_filepath):
 
     df = df.rename(columns={"Columna1": "unidad_que_la_realiza"})
     df = clean_column_names(df)
-    df = df.query("`cerrado/abierto` == 'ABIERTA'")
+    df = df.query("`cerrado/abierto` == 'ABIERTA'").copy()
     df["rut"] = df.rut.str.lower().str.replace("\.|-|\s", "", regex=True)
     df["rut_cortado"] = df.rut.str[:-1]
 
