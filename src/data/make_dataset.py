@@ -43,6 +43,17 @@ COLS_A_ELIMINAR = [
 
 
 def salted_sha256_anonymize(df, columns_to_anonymize):
+    """
+    Anonymizes specified columns in a DataFrame using salted SHA-256 hashing.
+
+    :param df: The input DataFrame.
+    :type df: pandas DataFrame
+    :param columns_to_anonymize: A list of column names to be anonymized.
+    :type columns_to_anonymize: list
+
+    :return: The anonymized DataFrame.
+    :rtype: pandas DataFrame
+    """
     anonymized_df = df.copy()
 
     salts = {}
@@ -65,19 +76,61 @@ def salted_sha256_anonymize(df, columns_to_anonymize):
 
 
 def preprocesar_diagnostico(serie_diagnostico):
+    """
+    Preprocesses a series of diagnoses by removing special characters.
+
+    :param serie_diagnostico: The series of diagnoses.
+    :type serie_diagnostico: pandas Series
+
+    :return: The preprocessed series of diagnoses.
+    :rtype: pandas Series
+    """
     return serie_diagnostico.str.replace("\.|\s|_", "", regex=True)
 
 
 def preprocesar_sexo(serie_sexo):
+    """
+    Preprocesses a series of genders by removing leading/trailing whitespaces and 
+    converting to lowercase.
+
+    :param serie_sexo: The series of genders.
+    :type serie_sexo: pandas Series
+
+    :return: The preprocessed series of genders.
+    :rtype: pandas Series
+    """
     return serie_sexo.str.strip().str.lower()
 
 
 def unir_filas_repetidas(df, columnas_repetidas, columna_distinta):
+    """
+    Concatenates rows with duplicate values in specified columns, joining the distinct 
+    values in another column.
+
+    :param df: The input DataFrame.
+    :type df: pandas DataFrame
+    :param columnas_repetidas: A list of column names with duplicate values.
+    :type columnas_repetidas: list
+    :param columna_distinta: The column containing distinct values to be joined.
+    :type columna_distinta: str
+
+    :return: The DataFrame with concatenated rows.
+    :rtype: pandas DataFrame
+    """
     tmp = df.groupby(columnas_repetidas)[columna_distinta].apply(", ".join).reset_index()
     return tmp
 
 
 def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
+    """
+    Reads and preprocesses diagnostic data from multiple Excel files.
+
+    :param input_filepath: The path to the input directory.
+    :type input_filepath: str
+
+    :return: The preprocessed diagnostic DataFrame.
+    :rtype: pandas DataFrame
+    """
     df = pd.concat(
         (
             pd.read_excel(archivo, usecols=COLS_A_OCUPAR.keys())
@@ -118,6 +171,15 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
 
 
 def clean_column_names(df):
+    """
+    Cleans the column names of a DataFrame by converting to lowercase and replacing spaces with underscores.
+
+    :param df: The input DataFrame.
+    :type df: pandas DataFrame
+
+    :return: The DataFrame with cleaned column names.
+    :rtype: pandas DataFrame
+    """
     tmp = df.copy()
 
     # Clean and transform the column names using vectorization
@@ -136,6 +198,15 @@ def clean_column_names(df):
 
 
 def leer_y_preprocesar_ambulatorio_procedimientos(input_filepath):
+    """
+    Reads and preprocesses procedure data from multiple Excel files.
+
+    :param input_filepath: The path to the input directory.
+    :type input_filepath: str
+
+    :return: The preprocessed procedure DataFrame.
+    :rtype: pandas DataFrame
+    """
     df = pd.concat(
         (pd.read_excel(archivo) for archivo in glob.glob(f"{input_filepath}/procedimientos/*.xlsx"))
     ).drop(columns=["N°", "Nombre", "Médico"])
