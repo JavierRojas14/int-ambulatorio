@@ -41,6 +41,22 @@ COLS_A_ELIMINAR = [
     "Apellido Materno Paciente",
 ]
 
+def anonymize_value(row, column, salt):
+    """
+    Anonymizes a single value using salted SHA-256 hashing.
+
+    :param row: The row of the DataFrame.
+    :type row: pandas Series
+    :param column: The column name.
+    :type column: str
+    :param salt: The salt value.
+    :type salt: bytes
+
+    :return: The anonymized value.
+    :rtype: str
+    """
+    return hashlib.sha256(salt + str(row[column]).encode()).hexdigest()
+
 
 def salted_sha256_anonymize(df, columns_to_anonymize):
     """
@@ -64,9 +80,7 @@ def salted_sha256_anonymize(df, columns_to_anonymize):
         salts[column] = salt.hex()
 
         # Pseudonymize the column values with salted SHA-256
-        anonymized_df[column] = df.apply(
-            lambda row: hashlib.sha256(salt + str(row[column]).encode()).hexdigest(), axis=1
-        )
+        anonymized_df[column] = df.apply(anonymize_value, args=(column, salt), axis=1)
 
     # Save the salts to a JSON file
     with open("data/processed/salts.json", "w") as file:
