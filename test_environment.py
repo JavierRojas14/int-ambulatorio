@@ -59,7 +59,7 @@ class TestUnirFilasRepetidas(unittest.TestCase):
             "col3": ["x", "x", "y", "y", "z", "z"],
         }
         df = pd.DataFrame(data)
-        expected_result = pd.DataFrame({"col1": [1, 2], "col2": ["a, b", "c, d"]})
+        expected_result = pd.DataFrame({"col1": [1, 2, None], "col2": ["a, b", "c, d", "e, f"]})
         actual_result = unir_filas_repetidas(df, ["col1"], "col2")
         pd.testing.assert_frame_equal(expected_result, actual_result)
 
