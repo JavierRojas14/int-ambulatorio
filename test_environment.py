@@ -62,20 +62,19 @@ class TestUnirFilasRepetidas(unittest.TestCase):
         expected_result = pd.DataFrame({"col1": [1, 2, None], "col2": ["a, b", "c, d", "e, f"]})
         actual_result = unir_filas_repetidas(df, ["col1"], "col2")
         pd.testing.assert_frame_equal(expected_result, actual_result)
-    
+
     def test_unir_filas_repetidas_multiple_rows(self):
         # Test case: Multiple duplicate values in columna_distinta, joining more than 2 rows
         data = {
-            'col1': [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4],
-            'col2': ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'],
-            'col3': ['x', 'y', 'z', 'w', 'v', 'u', 'x', 'y', 'z', 'w', 'v', 'u']
+            "col1": [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4],
+            "col2": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"],
+            "col3": ["x", "y", "z", "w", "v", "u", "x", "y", "z", "w", "v", "u"],
         }
         df = pd.DataFrame(data)
-        expected_result = pd.DataFrame({
-            'col1': [1, 2, 3, 4],
-            'col2': ['a, b, c', 'd, e, f', 'g, h, i', 'j, k, l']
-        })
-        actual_result = unir_filas_repetidas(df, ['col1'], 'col2')
+        expected_result = pd.DataFrame(
+            {"col1": [1, 2, 3, 4], "col2": ["a, b, c", "d, e, f", "g, h, i", "j, k, l"]}
+        )
+        actual_result = unir_filas_repetidas(df, ["col1"], "col2")
         pd.testing.assert_frame_equal(expected_result, actual_result)
 
 
