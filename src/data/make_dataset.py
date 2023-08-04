@@ -132,6 +132,9 @@ def unir_filas_repetidas(df, columnas_repetidas, columna_distinta):
     :return: The DataFrame with concatenated rows.
     :rtype: pandas DataFrame
     """
+    if df.empty:
+        return pd.DataFrame()
+
     tmp = (
         df.groupby(columnas_repetidas, dropna=False)[columna_distinta]
         .apply(", ".join)
