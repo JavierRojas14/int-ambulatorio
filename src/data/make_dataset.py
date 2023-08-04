@@ -41,6 +41,7 @@ COLS_A_ELIMINAR = [
     "Apellido Materno Paciente",
 ]
 
+
 def anonymize_value(row, column, salt):
     """
     Anonymizes a single value using salted SHA-256 hashing.
@@ -104,7 +105,7 @@ def preprocesar_diagnostico(serie_diagnostico):
 
 def preprocesar_sexo(serie_sexo):
     """
-    Preprocesses a series of genders by removing leading/trailing whitespaces and 
+    Preprocesses a series of genders by removing leading/trailing whitespaces and
     converting to lowercase.
 
     :param serie_sexo: The series of genders.
@@ -118,7 +119,7 @@ def preprocesar_sexo(serie_sexo):
 
 def unir_filas_repetidas(df, columnas_repetidas, columna_distinta):
     """
-    Concatenates rows with duplicate values in specified columns, joining the distinct 
+    Concatenates rows with duplicate values in specified columns, joining the distinct
     values in another column.
 
     :param df: The input DataFrame.
@@ -131,7 +132,11 @@ def unir_filas_repetidas(df, columnas_repetidas, columna_distinta):
     :return: The DataFrame with concatenated rows.
     :rtype: pandas DataFrame
     """
-    tmp = df.groupby(columnas_repetidas)[columna_distinta].apply(", ".join).reset_index()
+    tmp = (
+        df.groupby(columnas_repetidas, dropna=False)[columna_distinta]
+        .apply(", ".join)
+        .reset_index()
+    )
     return tmp
 
 
@@ -186,7 +191,7 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
 
 def clean_column_names(df):
     """
-    Cleans the column names of a DataFrame by converting to lowercase and replacing spaces with 
+    Cleans the column names of a DataFrame by converting to lowercase and replacing spaces with
     underscores.
 
     :param df: The input DataFrame.
