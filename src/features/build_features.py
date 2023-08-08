@@ -59,32 +59,47 @@ def add_year_month_day(df, datetime_column):
     return df
 
 
-def obtener_dfs_para_desglose_sociodemografico(
-    df, vars_groupby_estatico, vars_groupby_dinamico, col_diagnostico
+def conteo_agrupado_de_variable(
+    df, vars_groupby, col_a_contar, cols_para_llave, variable_analizada
 ):
-    dict_resultado = {}
-    cols_para_llave = vars_groupby_estatico + [col_diagnostico]
+    resultado = (
+        df.groupby(vars_groupby, dropna=True)[col_a_contar]
+        .value_counts()
+        .reset_index(name=f"conteo_{variable_analizada}")
+    )
+
+    resultado["llave_id"] = resultado[cols_para_llave].astype(str).apply("-".join, axis=1)
+    return resultado
+
+
+def obtener_desglose_sociodemografico(
+    df, vars_groupby_estatico, vars_groupby_dinamico, col_a_contar
+):
+    # Aqui se va a tener un groupby estatico. Ej: Anios
+    # Se va a tener un groupby dinamico. Ej: Sexo, Otros
+    # Y se va a tener una variable que se va a contar. Ej: Diagnostico
+
+    dict_resultados = {}
+    cols_para_llave = vars_groupby_estatico + [col_a_contar]
+
+    conteo_global = conteo_agrupado_de_variable(
+        df, vars_groupby_estatico, col_a_contar, cols_para_llave, "global"
+    )
+
+    dict_resultados["global"] = conteo_global
+
     for variable in vars_groupby_dinamico:
-        nuevo_desglose = vars_groupby_estatico + [variable]
-        if variable == col_diagnostico:
-            nuevo_desglose.pop()
-
-        resultado = (
-            df.groupby(nuevo_desglose, dropna=True)[col_diagnostico]
-            .value_counts()
-            .reset_index(name=f"conteo_{variable}")
+        # Por lo tanto, aqui el groupby que se hara sera ["Anios", "Sexo"].
+        desglose_dinamico = vars_groupby_estatico + [variable]
+        conteo_dinamico = conteo_agrupado_de_variable(
+            df, desglose_dinamico, col_a_contar, cols_para_llave, variable
         )
+        conteo_dinamico = conteo_dinamico.drop(columns=cols_para_llave)
 
-        resultado["llave_id"] = (
-            resultado[cols_para_llave].astype(str).apply("-".join, axis=1)
-        )
+        dict_resultados[variable] = conteo_dinamico
 
-        if variable != col_diagnostico:
-            resultado = resultado.drop(columns=cols_para_llave)
+    return dict_resultados
 
-        dict_resultado[variable] = resultado
-
-    return dict_resultado
 
 def obtener_diag_mas_cercano(df_paciente, fecha_procedimiento):
     diferencias_fecha = abs(fecha_procedimiento - df_paciente["fecha_atencion"])
