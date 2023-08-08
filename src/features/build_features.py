@@ -40,7 +40,7 @@ def agregar_rango_etario(df_procesada):
     return tmp
 
 
-def add_year_month_day(df, datetime_column):
+def agregar_anio_mes_dia(df, datetime_column):
     """
     Adds the year, month, and day columns to the dataframe.
 
