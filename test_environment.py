@@ -1,8 +1,10 @@
 import sys
 import unittest
 import pandas as pd
+import numpy as np
 
 from src.data.make_dataset import unir_filas_repetidas
+from src.features.build_features import conteo_agrupado_de_variable
 
 REQUIRED_PYTHON = "python3"
 
@@ -76,6 +78,57 @@ class TestUnirFilasRepetidas(unittest.TestCase):
         )
         actual_result = unir_filas_repetidas(df, ["col1"], "col2")
         pd.testing.assert_frame_equal(expected_result, actual_result)
+
+
+class TestConteoAgrupadoDeVariable(unittest.TestCase):
+    def setUp(self):
+        self.sample_data = {
+            "Category": ["A", "A", "B", "B", "A"],
+            "Value": [1, 2, 3, 4, 5],
+            "ID_1": [1001, 1002, 1001, 1002, 1001],
+            "ID_2": [2001, 2001, 2002, 2002, 2001],
+        }
+
+    def test_basic_scenario(self):
+        df = pd.DataFrame(self.sample_data)
+        result = conteo_agrupado_de_variable(df, ["Category"], "Value", ["ID_1", "ID_2"], "Values")
+        expected_data = {
+            "Category": ["A", "B"],
+            "Value": [3, 2],
+            "conteo_Values": [2, 2],
+            "llave_id": ["1001-2001", "1001-2002"],
+        }
+        expected_result = pd.DataFrame(expected_data)
+        pd.testing.assert_frame_equal(result, expected_result)
+
+    def test_empty_dataframe(self):
+        empty_df = pd.DataFrame(columns=["Category", "Value", "ID_1", "ID_2"])
+        empty_result = conteo_agrupado_de_variable(
+            empty_df, ["Category"], "Value", ["ID_1", "ID_2"], "Values"
+        )
+        pd.testing.assert_frame_equal(
+            empty_result, pd.DataFrame(columns=["Category", f"conteo_Values", "llave_id"])
+        )
+
+    def test_missing_values(self):
+        missing_data = {
+            "Category": ["A", "A", "B", "B", np.nan],
+            "Value": [1, 2, 3, 4, 5],
+            "ID_1": [1001, 1002, 1001, 1002, 1001],
+            "ID_2": [2001, 2001, 2002, 2002, 2001],
+        }
+        missing_df = pd.DataFrame(missing_data)
+        missing_result = conteo_agrupado_de_variable(
+            missing_df, ["Category"], "Value", ["ID_1", "ID_2"], "Values"
+        )
+        expected_missing_data = {
+            "Category": ["A", "B", np.nan],
+            "Value": [2, 2, 1],
+            "conteo_Values": [2, 2, 1],
+            "llave_id": ["1001-2001", "1001-2002", "1001-2001"],
+        }
+        expected_missing_result = pd.DataFrame(expected_missing_data)
+        pd.testing.assert_frame_equal(missing_result, expected_missing_result)
 
 
 def main():
