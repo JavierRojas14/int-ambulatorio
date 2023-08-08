@@ -75,6 +75,11 @@ def conteo_agrupado_de_variable(
     Returns:
         pandas.DataFrame: A DataFrame containing grouped counts and aggregated data.
     """
+    columnas_finales = vars_groupby + [col_a_contar]
+    if not all(col in columnas_finales for col in cols_para_llave):
+        raise ValueError("Tus columnas para hacer la llave estan ausentes en las columnas finales. "
+                         "Debes utilizar columnas que esten en la agrupacion + variable de conteo "
+                         "para hacer una llave valida")
 
     resultado = (
         df.groupby(vars_groupby, dropna=True)[col_a_contar]
