@@ -85,7 +85,7 @@ def conteo_agrupado_de_variable(
         return None
 
     resultado = (
-        df.groupby(vars_groupby, dropna=True)[col_a_contar]
+        df.groupby(vars_groupby, dropna=False)[col_a_contar]
         .value_counts()
         .reset_index(name=f"conteo_{variable_analizada}")
     )
