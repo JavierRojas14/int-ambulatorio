@@ -126,10 +126,10 @@ class TestConteoAgrupadoDeVariable(unittest.TestCase):
             missing_df, ["Category"], "ICD-10", ["Category", "ICD-10"], "Counts"
         )
         expected_missing_data = {
-            "Category": ["A", "B", np.nan],
-            "ICD-10": ["A00", "B01", "E04"],
-            f"conteo_Counts": [2, 1, 1],
-            "llave_id": ["A-A00", "B-B01", "A-E04"],
+            "Category": ["A", "A", "B", "B", np.nan],
+            "ICD-10": ["A00", "B01", "C02", "D03", "E04"],
+            "conteo_Counts": [1, 1, 1, 1, 1],
+            "llave_id": ["A-A00", "A-B01", "B-C02", "B-D03", "nan-E04"],
         }
         expected_missing_result = pd.DataFrame(expected_missing_data)
         pd.testing.assert_frame_equal(missing_result, expected_missing_result)
