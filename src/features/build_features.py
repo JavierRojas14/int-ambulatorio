@@ -81,6 +81,9 @@ def conteo_agrupado_de_variable(
                          "Debes utilizar columnas que esten en la agrupacion + variable de conteo "
                          "para hacer una llave valida")
 
+    if df.empty:
+        return None
+
     resultado = (
         df.groupby(vars_groupby, dropna=True)[col_a_contar]
         .value_counts()

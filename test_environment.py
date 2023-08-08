@@ -83,49 +83,53 @@ class TestUnirFilasRepetidas(unittest.TestCase):
 class TestConteoAgrupadoDeVariable(unittest.TestCase):
     def setUp(self):
         self.sample_data = {
-            "Category": ["A", "A", "B", "B", "A"],
-            "Value": [1, 2, 3, 4, 5],
-            "ID_1": [1001, 1002, 1001, 1002, 1001],
-            "ID_2": [2001, 2001, 2002, 2002, 2001],
+            "Category": ["A", "B", "A", "C", "B", "B"],
+            "ICD-10": ["A00", "B01", "C02", "D03", "A00", "A00"],
+            "Gender": ["M", "F", "M", "F", "F", "F"],
+            "ID_1": [1001, 1002, 1001, 1003, 1002, 1001],
+            "ID_2": [2001, 2001, 2002, 2003, 2002, 2001],
         }
 
     def test_basic_scenario(self):
         df = pd.DataFrame(self.sample_data)
-        result = conteo_agrupado_de_variable(df, ["Category"], "Value", ["ID_1", "ID_2"], "Values")
+        result = conteo_agrupado_de_variable(
+            df, ["Category"], "ICD-10", ["Category", "ICD-10"], "Counts"
+        )
+
         expected_data = {
-            "Category": ["A", "B"],
-            "Value": [3, 2],
-            "conteo_Values": [2, 2],
-            "llave_id": ["1001-2001", "1001-2002"],
+            "Category": ["A", "A", "B", "B", "C"],
+            "ICD-10": ["A00", "C02", "A00", "B01", "D03"],
+            "conteo_Counts": [1, 1, 2, 1, 1],
+            "llave_id": ["A-A00", "A-C02", "B-A00", "B-B01", "C-D03"],
         }
         expected_result = pd.DataFrame(expected_data)
         pd.testing.assert_frame_equal(result, expected_result)
 
     def test_empty_dataframe(self):
-        empty_df = pd.DataFrame(columns=["Category", "Value", "ID_1", "ID_2"])
+        empty_df = pd.DataFrame(columns=["Category", "ICD-10", "Gender", "ID_1", "ID_2"])
         empty_result = conteo_agrupado_de_variable(
-            empty_df, ["Category"], "Value", ["ID_1", "ID_2"], "Values"
+            empty_df, ["Category"], "ICD-10", ["Category", "ICD-10"], "Counts"
         )
-        pd.testing.assert_frame_equal(
-            empty_result, pd.DataFrame(columns=["Category", f"conteo_Values", "llave_id"])
-        )
+
+        self.assertEqual(empty_result, None)
 
     def test_missing_values(self):
         missing_data = {
             "Category": ["A", "A", "B", "B", np.nan],
-            "Value": [1, 2, 3, 4, 5],
+            "ICD-10": ["A00", "B01", "C02", "D03", "E04"],
+            "Gender": ["M", "F", "M", "F", "F"],
             "ID_1": [1001, 1002, 1001, 1002, 1001],
             "ID_2": [2001, 2001, 2002, 2002, 2001],
         }
         missing_df = pd.DataFrame(missing_data)
         missing_result = conteo_agrupado_de_variable(
-            missing_df, ["Category"], "Value", ["ID_1", "ID_2"], "Values"
+            missing_df, ["Category"], "ICD-10", ["Category", "ICD-10"], "Counts"
         )
         expected_missing_data = {
             "Category": ["A", "B", np.nan],
-            "Value": [2, 2, 1],
-            "conteo_Values": [2, 2, 1],
-            "llave_id": ["1001-2001", "1001-2002", "1001-2001"],
+            "ICD-10": ["A00", "B01", "E04"],
+            f"conteo_Counts": [2, 1, 1],
+            "llave_id": ["A-A00", "B-B01", "A-E04"],
         }
         expected_missing_result = pd.DataFrame(expected_missing_data)
         pd.testing.assert_frame_equal(missing_result, expected_missing_result)
