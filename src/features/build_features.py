@@ -62,6 +62,20 @@ def add_year_month_day(df, datetime_column):
 def conteo_agrupado_de_variable(
     df, vars_groupby, col_a_contar, cols_para_llave, variable_analizada
 ):
+    """
+    Perform grouped counting and aggregation of a variable in a DataFrame.
+
+    Args:
+        df (pandas.DataFrame): The input DataFrame.
+        vars_groupby (list[str]): Columns by which to group the DataFrame.
+        col_a_contar (str): Column containing values to be counted.
+        cols_para_llave (list[str]): Columns to be used as keys for aggregation.
+        variable_analizada (str): Name of the variable being analyzed.
+
+    Returns:
+        pandas.DataFrame: A DataFrame containing grouped counts and aggregated data.
+    """
+
     resultado = (
         df.groupby(vars_groupby, dropna=True)[col_a_contar]
         .value_counts()
@@ -75,6 +89,19 @@ def conteo_agrupado_de_variable(
 def obtener_desglose_sociodemografico(
     df, vars_groupby_estatico, vars_groupby_dinamico, col_a_contar
 ):
+    """
+    Obtain demographic breakdown of a specified variable within static and dynamic groups.
+
+    Args:
+        df (pandas.DataFrame): The input DataFrame.
+        vars_groupby_estatico (list[str]): Columns for static grouping.
+        vars_groupby_dinamico (list[str]): Columns for dynamic grouping.
+        col_a_contar (str): Column containing values to be counted.
+
+    Returns:
+        dict: A dictionary containing breakdown results for static and dynamic groups.
+    """
+
     # Aqui se va a tener un groupby estatico. Ej: Anios
     # Se va a tener un groupby dinamico. Ej: Sexo, Otros
     # Y se va a tener una variable que se va a contar. Ej: Diagnostico
