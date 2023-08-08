@@ -134,6 +134,33 @@ class TestConteoAgrupadoDeVariable(unittest.TestCase):
         expected_missing_result = pd.DataFrame(expected_missing_data)
         pd.testing.assert_frame_equal(missing_result, expected_missing_result)
 
+    def test_duplicates_in_grouping(self):
+        duplicate_data = {
+            "Category": ["A", "A", "B", "B", "A"],
+            "ICD-10": ["A00", "B01", "C02", "D03", "A00"],
+            "Gender": ["M", "F", "M", "F", "M"],
+            "ID_1": [1001, 1002, 1001, 1002, 1001],
+            "ID_2": [2001, 2001, 2002, 2002, 2001],
+        }
+        duplicate_df = pd.DataFrame(duplicate_data)
+        result = conteo_agrupado_de_variable(
+            duplicate_df,
+            ["Category", "Gender"],
+            "ICD-10",
+            ["Category", "Gender", "ICD-10"],
+            "Counts",
+        )
+
+        expected_data = {
+            "Category": ["A", "A", "B", "B"],
+            "Gender": ["F", "M", "F", "M"],
+            "ICD-10": ["B01", "A00", "D03", "C02"],
+            "conteo_Counts": [1, 2, 1, 1],
+            "llave_id": ["A-F-B01", "A-M-A00", "B-F-D03", "B-M-C02"],
+        }
+        expected_result = pd.DataFrame(expected_data)
+        pd.testing.assert_frame_equal(result, expected_result)
+
 
 def main():
     system_major = sys.version_info.major
