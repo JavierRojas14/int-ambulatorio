@@ -143,6 +143,17 @@ def unir_filas_repetidas(df, columnas_repetidas, columna_distinta):
     return tmp
 
 
+def obtener_diccionario_traductor_diags():
+    archivo = pd.ExcelFile("data/external/diagnosticos_encontrados_asignados_cie_10.xlsx")
+    df = pd.concat((pd.read_excel(archivo, sheet_name=hoja) for hoja in archivo.sheet_names))
+    diagnosticos_anomalos_con_cie = df[~df["CIE 10"].isna()][["codigo_diagnostico", "CIE 10"]]
+    diccionario_diags = diagnosticos_anomalos_con_cie.set_index("codigo_diagnostico").to_dict()[
+        "CIE 10"
+    ]
+
+    return diccionario_diags
+
+
 def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
     """
     Reads and preprocesses diagnostic data from multiple Excel files.
@@ -185,6 +196,9 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
     df = salted_sha256_anonymize(df, COLS_A_HASHEAR)
     df = df.rename(columns={"Rut Paciente": "ID_PACIENTE", "Rut Profesional": "ID_PROFESIONAL"})
     df = clean_column_names(df)
+
+    diccionario_diagnosticos = obtener_diccionario_traductor_diags()
+    df["codigo_diagnostico"] = df["codigo_diagnostico"].replace(diccionario_diagnosticos)
 
     return df
 
