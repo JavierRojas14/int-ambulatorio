@@ -146,7 +146,11 @@ def unir_filas_repetidas(df, columnas_repetidas, columna_distinta):
 def obtener_diccionario_traductor_diags():
     archivo = pd.ExcelFile("data/external/diagnosticos_encontrados_asignados_cie_10.xlsx")
     df = pd.concat((pd.read_excel(archivo, sheet_name=hoja) for hoja in archivo.sheet_names))
+
     diagnosticos_anomalos_con_cie = df[~df["CIE 10"].isna()][["codigo_diagnostico", "CIE 10"]]
+    diagnosticos_anomalos_con_cie["codigo_diagnostico"] = diagnosticos_anomalos_con_cie[
+        "codigo_diagnostico"
+    ].astype(str)
     diccionario_diags = diagnosticos_anomalos_con_cie.set_index("codigo_diagnostico").to_dict()[
         "CIE 10"
     ]
