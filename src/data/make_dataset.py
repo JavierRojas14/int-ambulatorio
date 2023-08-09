@@ -154,6 +154,31 @@ def obtener_diccionario_traductor_diags():
     return diccionario_diags
 
 
+def modificar_diags_largo_3(df):
+    tmp = df.copy()
+
+    mask_largo_3 = tmp["codigo_diagnostico"].str.len() == 3
+    tmp.loc[mask_largo_3, "codigo_diagnostico"] = tmp.loc[
+        mask_largo_3, "codigo_diagnostico"
+    ].str.ljust(4, "X")
+
+    return tmp
+
+
+def modificar_diags_largo_5(df):
+    tmp = df.copy()
+
+    mask_largo_5_con_guion = (tmp["codigo_diagnostico"].str.len() == 5) & ~(
+        tmp["codigo_diagnostico"].str.contains("-")
+    )
+
+    tmp.loc[mask_largo_5_con_guion, "codigo_diagnostico"] = tmp.loc[
+        mask_largo_5_con_guion, "codigo_diagnostico"
+    ].str[:4]
+
+    return tmp
+
+
 def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
     """
     Reads and preprocesses diagnostic data from multiple Excel files.
@@ -199,6 +224,8 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
 
     diccionario_diagnosticos = obtener_diccionario_traductor_diags()
     df["codigo_diagnostico"] = df["codigo_diagnostico"].replace(diccionario_diagnosticos)
+    df = modificar_diags_largo_3(df)
+    df = modificar_diags_largo_5(df)
 
     return df
 
