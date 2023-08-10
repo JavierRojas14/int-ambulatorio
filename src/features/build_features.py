@@ -144,3 +144,12 @@ def obtener_diag_mas_cercano(df_paciente, fecha_procedimiento):
     diag_mas_cercano = df_paciente.loc[indice_fecha_mas_cercana, "codigo_diagnostico"]
 
     return diag_mas_cercano
+
+
+def leer_cie_y_unir_a_datos(df, columna_diagnostico_df):
+    cie = pd.read_excel("../data/external/CIE-10 - sin_puntos_y_X.xlsx")
+
+    union = pd.merge(
+        df, cie, how="left", left_on=columna_diagnostico_df, right_on="Código"
+    )
+    return union
