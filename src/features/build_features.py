@@ -148,7 +148,7 @@ def obtener_diag_mas_cercano(df_paciente, fecha_procedimiento):
     return diag_mas_cercano
 
 
-def asignar_diagnosticos_a_procedimientos(sesiones_pacientes_unicas, df_consultas):
+def asignar_diagnosticos_a_sesiones_de_procedimientos(sesiones_pacientes_unicas, df_consultas):
     diagnosticos_de_sesiones = []
     print(f"Se buscaran los datos de {len(sesiones_pacientes_unicas)} sesiones unicas de proceds.")
     for id_paciente, fecha_procedimiento in sesiones_pacientes_unicas:
@@ -163,6 +163,25 @@ def asignar_diagnosticos_a_procedimientos(sesiones_pacientes_unicas, df_consulta
     diags_por_procedimientos.columns = ["codigo_diagnostico"]
 
     return diags_por_procedimientos
+
+
+def asignar_diagnosticos_a_todos_los_procedimientos(df_procedimientos, df_consultas):
+    vars_sesion_unica = ["id_paciente", "fecha_realizacion"]
+    sesiones_unicas_proced = df_procedimientos[vars_sesion_unica].value_counts().index
+
+    sesiones_procedimientos_con_diagnosticos = asignar_diagnosticos_a_sesiones_de_procedimientos(
+        sesiones_unicas_proced, df_consultas
+    )
+
+    todos_los_proced_con_diag = pd.merge(
+        df_procedimientos.set_index(vars_sesion_unica),
+        sesiones_procedimientos_con_diagnosticos,
+        how="inner",
+        left_index=True,
+        right_index=True,
+    ).reset_index()
+
+    return todos_los_proced_con_diag
 
 
 def leer_cie_y_unir_a_datos(df, columna_diagnostico_df):
