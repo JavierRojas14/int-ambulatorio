@@ -77,9 +77,11 @@ def conteo_agrupado_de_variable(
     """
     columnas_finales = vars_groupby + [col_a_contar]
     if not all(col in columnas_finales for col in cols_para_llave):
-        raise ValueError("Tus columnas para hacer la llave estan ausentes en las columnas finales. "
-                         "Debes utilizar columnas que esten en la agrupacion + variable de conteo "
-                         "para hacer una llave valida")
+        raise ValueError(
+            "Tus columnas para hacer la llave estan ausentes en las columnas finales. "
+            "Debes utilizar columnas que esten en la agrupacion + variable de conteo "
+            "para hacer una llave valida"
+        )
 
     if df.empty:
         return None
@@ -146,10 +148,25 @@ def obtener_diag_mas_cercano(df_paciente, fecha_procedimiento):
     return diag_mas_cercano
 
 
+def asignar_diagnosticos_a_procedimientos(sesiones_pacientes_unicas, df_consultas):
+    diagnosticos_de_sesiones = []
+    print(f"Se buscaran los datos de {len(sesiones_pacientes_unicas)} sesiones unicas de proceds.")
+    for id_paciente, fecha_procedimiento in sesiones_pacientes_unicas:
+        df_paciente = df_consultas.query("id_paciente == @id_paciente")
+        diag_mas_cercano = obtener_diag_mas_cercano(df_paciente, fecha_procedimiento)
+        diagnosticos_de_sesiones.append(diag_mas_cercano)
+
+    diags_por_procedimientos = pd.DataFrame(
+        diagnosticos_de_sesiones, index=sesiones_pacientes_unicas
+    )
+
+    diags_por_procedimientos.columns = ["codigo_diagnostico"]
+
+    return diags_por_procedimientos
+
+
 def leer_cie_y_unir_a_datos(df, columna_diagnostico_df):
     cie = pd.read_excel("../data/external/CIE-10 - sin_puntos_y_X.xlsx")
 
-    union = pd.merge(
-        df, cie, how="left", left_on=columna_diagnostico_df, right_on="Código"
-    )
+    union = pd.merge(df, cie, how="left", left_on=columna_diagnostico_df, right_on="Código")
     return union
