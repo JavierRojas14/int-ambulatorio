@@ -184,6 +184,33 @@ def asignar_diagnosticos_a_todos_los_procedimientos(df_procedimientos, df_consul
     return todos_los_proced_con_diag
 
 
+def obtener_cartera_de_procedimientos_por_diagnostico(proced_con_diagnosticos):
+    conteo_procedimientos = (
+        proced_con_diagnosticos.groupby("codigo_diagnostico")["glosa"]
+        .value_counts()
+        .reset_index(name="cantidad_procedimientos")
+    )
+
+    cantidad_pacientes_por_diags = (
+        proced_con_diagnosticos.groupby("codigo_diagnostico")["id_paciente"]
+        .nunique()
+        .reset_index(name="cantidad_pacientes_distintos")
+    )
+
+    proceds_por_diagnosticos_y_pacientes = pd.merge(
+        conteo_procedimientos, cantidad_pacientes_por_diags, how="inner", on="codigo_diagnostico"
+    )
+
+    proporcion_de_proceds = (
+        proceds_por_diagnosticos_y_pacientes["cantidad_procedimientos"]
+        / proceds_por_diagnosticos_y_pacientes["cantidad_pacientes_distintos"]
+    )
+
+    proceds_por_diagnosticos_y_pacientes["cantidad_proced_por_pacientes"] = proporcion_de_proceds
+
+    return proceds_por_diagnosticos_y_pacientes
+
+
 def leer_cie_y_unir_a_datos(df, columna_diagnostico_df):
     cie = pd.read_excel("../data/external/CIE-10 - sin_puntos_y_X.xlsx")
 
