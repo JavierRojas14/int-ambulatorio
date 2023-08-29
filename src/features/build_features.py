@@ -240,6 +240,16 @@ def obtener_procedimientos_en_dia_de_consulta(df_procedimientos, df_consultas):
     return proced_en_dia_de_consulta
 
 
+def indicar_primera_consulta_pacientes(df_diagnosticos):
+    tmp = df_diagnosticos.copy()
+
+    primeras_consultas = tmp.groupby("id_paciente").head(1).index
+    tmp.loc[primeras_consultas, "nueva_consulta"] = 1
+    tmp["nueva_consulta"] = tmp["nueva_consulta"].fillna(0).astype(int)
+
+    return tmp
+
+
 def leer_cie_y_unir_a_datos(df, columna_diagnostico_df):
     cie = pd.read_excel("../data/external/CIE-10 - sin_puntos_y_X.xlsx")
 
