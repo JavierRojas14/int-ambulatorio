@@ -211,6 +211,35 @@ def obtener_cartera_de_procedimientos_por_diagnostico(proced_con_diagnosticos):
     return proceds_por_diagnosticos_y_pacientes
 
 
+def obtener_procedimientos_en_dia_de_consulta(df_procedimientos, df_consultas):
+    """Función que permite obtener los procedimientos que fueron realizado el mismo día de una
+    consulta. Ambas bases de datos deben tener las columnas "year", "month" y "day"
+
+    Args:
+        df_procedimientos (pd.DataFrame): El DataFrame que tenga los procedimientos realizados
+        df_consultas (pd.DataFrame): El DataFrame de consultas
+
+    Returns:
+        pd.DataFrame: El DataFrame con los procedimientos y consultas realizados el mismo dia.
+    """
+    tmp_procedimientos = df_procedimientos.copy()
+    tmp_consultas = df_consultas.copy()
+
+    columnas_fecha = ["year", "month", "day"]
+    for columna in columnas_fecha:
+        tmp_procedimientos[columna] = tmp_procedimientos[columna].astype(int)
+        tmp_consultas[columna] = tmp_consultas[columna].astype(int)
+
+    tmp_procedimientos = tmp_procedimientos.set_index(["id_paciente"] + columnas_fecha)
+    tmp_consultas = tmp_consultas.set_index(["id_paciente"] + columnas_fecha)
+
+    proced_en_dia_de_consulta = pd.merge(
+        tmp_procedimientos, tmp_consultas, how="inner", left_index=True, right_index=True
+    )
+
+    return proced_en_dia_de_consulta
+
+
 def leer_cie_y_unir_a_datos(df, columna_diagnostico_df):
     cie = pd.read_excel("../data/external/CIE-10 - sin_puntos_y_X.xlsx")
 
