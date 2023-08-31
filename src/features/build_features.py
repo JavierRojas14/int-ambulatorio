@@ -243,7 +243,7 @@ def obtener_procedimientos_en_dia_de_consulta(df_procedimientos, df_consultas):
 def indicar_primera_consulta_pacientes(df_diagnosticos):
     tmp = df_diagnosticos.copy()
 
-    primeras_consultas = tmp.groupby("id_paciente").head(1).index
+    primeras_consultas = tmp.groupby(["id_paciente", "nombre_especialidad"]).head(1).index
     tmp.loc[primeras_consultas, "nueva_consulta"] = 1
     tmp["nueva_consulta"] = tmp["nueva_consulta"].fillna(0).astype(int)
 
