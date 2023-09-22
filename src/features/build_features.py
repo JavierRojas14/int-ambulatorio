@@ -27,7 +27,7 @@ def agregar_rango_etario(df_procesada):
     tmp = df_procesada.copy()
 
     edad_primera_consulta = (tmp["fecha_atencion"] - tmp["fecha_nacimiento"]) / np.timedelta64(
-        1, "Y"
+        365, "D"
     )
 
     tmp["edad_primera_consulta"] = edad_primera_consulta
