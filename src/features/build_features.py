@@ -186,19 +186,22 @@ def asignar_diagnosticos_a_todos_los_procedimientos(df_procedimientos, df_consul
 
 def obtener_cartera_de_procedimientos_por_diagnostico(proced_con_diagnosticos):
     conteo_procedimientos = (
-        proced_con_diagnosticos.groupby("codigo_diagnostico")["glosa"]
+        proced_con_diagnosticos.groupby(["year", "codigo_diagnostico"])["glosa"]
         .value_counts()
         .reset_index(name="cantidad_procedimientos")
     )
 
     cantidad_pacientes_por_diags = (
-        proced_con_diagnosticos.groupby("codigo_diagnostico")["id_paciente"]
+        proced_con_diagnosticos.groupby(["year", "codigo_diagnostico"])["id_paciente"]
         .nunique()
         .reset_index(name="cantidad_pacientes_distintos")
     )
 
     proceds_por_diagnosticos_y_pacientes = pd.merge(
-        conteo_procedimientos, cantidad_pacientes_por_diags, how="inner", on="codigo_diagnostico"
+        conteo_procedimientos,
+        cantidad_pacientes_por_diags,
+        how="inner",
+        on=["year", "codigo_diagnostico"],
     )
 
     proporcion_de_proceds = (
