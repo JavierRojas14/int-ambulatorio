@@ -8,7 +8,7 @@ from pptx.dml.color import RGBColor
 def add_dataframes_to_powerpoint(
     dataframes,
     pptx_filename,
-    font_size=Pt(12),
+    font_size=12,
     font_family="Arial",
     max_cell_characters=50,
     cell_width=2,
@@ -28,7 +28,6 @@ def add_dataframes_to_powerpoint(
         top = Inches(1)
         width = Inches(cell_width)
         height = Inches(cell_height)
-        font_size = Pt(font_size).emu
 
         # Add a table to the slide
         table = slide.shapes.add_table(len(df) + 1, len(df.columns), left, top, width, height).table
@@ -41,7 +40,7 @@ def add_dataframes_to_powerpoint(
                 PP_ALIGN.LEFT if pd.api.types.is_string_dtype(df[column_name]) else PP_ALIGN.RIGHT
             )
             cell.text_frame.paragraphs[0].font.bold = True
-            # cell.text_frame.paragraphs[0].font.size = font_size
+            cell.text_frame.paragraphs[0].font.size = Pt(font_size)
             cell.text_frame.paragraphs[0].font.name = font_family
             cell.text_frame.paragraphs[0].font.color.rgb = RGBColor(0, 0, 0)  # Black font color
 
@@ -61,7 +60,7 @@ def add_dataframes_to_powerpoint(
                     if pd.api.types.is_string_dtype(df.iloc[:, col_idx])
                     else PP_ALIGN.RIGHT
                 )
-                # cell.text_frame.paragraphs[0].font.size = font_size
+                cell.text_frame.paragraphs[0].font.size = Pt(font_size)
                 cell.text_frame.paragraphs[0].font.name = font_family
 
         # Autofit table dimensions based on cell content
