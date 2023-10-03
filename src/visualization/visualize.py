@@ -42,7 +42,9 @@ def add_dataframes_to_powerpoint(
             cell.text_frame.paragraphs[0].font.bold = True
             cell.text_frame.paragraphs[0].font.size = Pt(font_size)
             cell.text_frame.paragraphs[0].font.name = font_family
-            cell.text_frame.paragraphs[0].font.color.rgb = RGBColor(0, 0, 0)  # Black font color
+            cell.text_frame.paragraphs[0].font.color.rgb = RGBColor(
+                255, 255, 255
+            )  # White font color
 
         # Iterate through the DataFrame rows and columns
         for row_idx, row in enumerate(df.itertuples(index=False)):
