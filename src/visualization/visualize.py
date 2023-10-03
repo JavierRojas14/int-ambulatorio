@@ -32,7 +32,7 @@ def add_dataframes_to_powerpoint(
         # Add a table to the slide
         table = slide.shapes.add_table(len(df) + 1, len(df.columns), left, top, width, height)
         tbl = table._element.graphic.graphicData.tbl
-        style_id = "{E8B1032C-EA38-4F05-BA0D-38AFFFC7BED3}"
+        style_id = "{FABFCF23-3B69-468F-B69F-88F6DE6A72F2}"
         tbl[0][-1].text = style_id
 
         # Set column headers and alignment based on data type
