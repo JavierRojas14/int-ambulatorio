@@ -48,7 +48,7 @@ def add_dataframes_to_powerpoint(dataframes, pptx_filename):
                     cell.text = str(value)
                     cell.text_frame.paragraphs[0].alignment = PP_ALIGN.LEFT
                 elif pd.api.types.is_numeric_dtype(df.iloc[:, col_idx]):
-                    cell.text = f"{value:.2f}"  # Format numeric data
+                    cell.text = str(value)  # Format numeric data
                     cell.text_frame.paragraphs[0].alignment = PP_ALIGN.RIGHT
 
     # Save the PowerPoint presentation
