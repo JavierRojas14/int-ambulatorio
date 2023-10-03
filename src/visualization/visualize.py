@@ -55,7 +55,9 @@ def add_dataframes_to_powerpoint(
                 cell = table.table.cell(row_idx + 1, col_idx)
 
                 # Truncate cell content if it exceeds the character limit
-                cell_text = str(value)[:max_cell_characters]
+                cell_text = str(value)
+                if len(cell_text) >= max_cell_characters:
+                    cell_text = f"{str(value)[:max_cell_characters]}..."
 
                 cell.text = cell_text
 
