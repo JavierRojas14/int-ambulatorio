@@ -25,7 +25,7 @@ def add_dataframes_to_powerpoint(
 
         # Define table position on the slide (fits the entire slide)
         left = Inches(0.5)  # Adjust the left margin as needed
-        top = Inches(1)
+        top = Inches(1.5)
         width = Inches(cell_width)
         height = Inches(cell_height)
 
