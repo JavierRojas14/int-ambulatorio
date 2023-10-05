@@ -297,7 +297,7 @@ def leer_y_preprocesar_ambulatorio_procedimientos(input_filepath):
 
     df = df.rename(columns={"Columna1": "unidad_que_la_realiza"})
     df = clean_column_names(df)
-    df = df.query("`cerrado/abierto` == 'ABIERTA'")
+    df = df.query("`cerrado/abierto` == 'ABIERTA'").copy()
     df["rut"] = df.rut.str.lower().str.replace("\.|-|\s", "", regex=True)
     df["rut_cortado"] = df.rut.str[:-1]
 
@@ -355,24 +355,24 @@ def main(input_filepath, output_filepath):
     logger = logging.getLogger(__name__)
     logger.info("making final data set from raw data")
 
-    # df_diagnosticos = leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath)
-    # df_procedimientos = leer_y_preprocesar_ambulatorio_procedimientos(input_filepath)
+    df_diagnosticos = leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath)
+    df_procedimientos = leer_y_preprocesar_ambulatorio_procedimientos(input_filepath)
     df_track = leer_y_preprocesar_ambulatorio_trackcare(input_filepath)
 
-    # df_diagnosticos.to_csv(
-    #     f"{output_filepath}/datos_limpios_diagnosticos.csv",
-    #     encoding="latin-1",
-    #     index=False,
-    #     sep=";",
-    #     errors="replace",
-    # )
-    # df_procedimientos.to_csv(
-    #     f"{output_filepath}/datos_limpios_procedimientos.csv",
-    #     encoding="latin-1",
-    #     index=False,
-    #     sep=";",
-    #     errors="replace",
-    # )
+    df_diagnosticos.to_csv(
+        f"{output_filepath}/datos_limpios_diagnosticos.csv",
+        encoding="latin-1",
+        index=False,
+        sep=";",
+        errors="replace",
+    )
+    df_procedimientos.to_csv(
+        f"{output_filepath}/datos_limpios_procedimientos.csv",
+        encoding="latin-1",
+        index=False,
+        sep=";",
+        errors="replace",
+    )
 
     df_track.to_csv(
         f"{output_filepath}/datos_limpios_track.csv",
