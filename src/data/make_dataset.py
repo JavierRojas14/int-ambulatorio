@@ -42,6 +42,22 @@ COLS_A_ELIMINAR = [
 ]
 
 
+COLUMNAS_UTILES_TRACKCARE = [
+    "PAPMIID",
+    "Sexo",
+    "Edad",
+    "Comuna",
+    "Provincia",
+    "Region",
+    "Prevision",
+    "Plan",
+    "TipoAtencion",
+    "FechaCita",
+    "HoraCita",
+    "EstadoCita",
+]
+
+
 def anonymize_value(row, column, salt):
     """
     Anonymizes a single value using salted SHA-256 hashing.
@@ -298,6 +314,37 @@ def leer_y_preprocesar_ambulatorio_procedimientos(input_filepath):
     return df
 
 
+################################ Datos Pacientes ########################################
+
+
+def leer_y_preprocesar_ambulatorio_trackcare(input_filepath):
+    df = pd.concat(
+        (
+            pd.read_csv(archivo, encoding="latin-1", sep="\t", usecols=COLUMNAS_UTILES_TRACKCARE)
+            for archivo in glob.glob(f"{input_filepath}/trackcare/*.xls")
+        )
+    )
+
+    df = clean_column_names(df)
+    df["hora_completa_cita"] = pd.to_datetime(df["fechacita"] + " " + df["horacita"], dayfirst=True)
+
+    df["id_paciente"] = (
+        df["papmiid"].str.lower().str.replace("\.|-|\s", "", regex=True).str[:-1].astype(str)
+    )
+
+    with open("data/processed/salts.json", encoding="utf-8") as file:
+        sales = json.load(file)
+        sal_rut = sales["Rut Paciente"]
+
+    df["id_paciente"] = (
+        bytes.fromhex(sal_rut) + df["id_paciente"].str.encode(encoding="utf-8")
+    ).apply(lambda x: hashlib.sha256(x).hexdigest())
+
+    df = df.drop(columns="papmiid")
+
+    return df
+
+
 @click.command()
 @click.argument("input_filepath", type=click.Path(exists=True))
 @click.argument("output_filepath", type=click.Path())
@@ -308,18 +355,27 @@ def main(input_filepath, output_filepath):
     logger = logging.getLogger(__name__)
     logger.info("making final data set from raw data")
 
-    df_diagnosticos = leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath)
-    df_procedimientos = leer_y_preprocesar_ambulatorio_procedimientos(input_filepath)
+    # df_diagnosticos = leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath)
+    # df_procedimientos = leer_y_preprocesar_ambulatorio_procedimientos(input_filepath)
+    df_track = leer_y_preprocesar_ambulatorio_trackcare(input_filepath)
 
-    df_diagnosticos.to_csv(
-        f"{output_filepath}/datos_limpios_diagnosticos.csv",
-        encoding="latin-1",
-        index=False,
-        sep=";",
-        errors="replace",
-    )
-    df_procedimientos.to_csv(
-        f"{output_filepath}/datos_limpios_procedimientos.csv",
+    # df_diagnosticos.to_csv(
+    #     f"{output_filepath}/datos_limpios_diagnosticos.csv",
+    #     encoding="latin-1",
+    #     index=False,
+    #     sep=";",
+    #     errors="replace",
+    # )
+    # df_procedimientos.to_csv(
+    #     f"{output_filepath}/datos_limpios_procedimientos.csv",
+    #     encoding="latin-1",
+    #     index=False,
+    #     sep=";",
+    #     errors="replace",
+    # )
+
+    df_track.to_csv(
+        f"{output_filepath}/datos_limpios_track.csv",
         encoding="latin-1",
         index=False,
         sep=";",
