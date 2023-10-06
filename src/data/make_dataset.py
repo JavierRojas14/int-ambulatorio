@@ -340,7 +340,9 @@ def leer_y_preprocesar_ambulatorio_trackcare(input_filepath):
         bytes.fromhex(sal_rut) + df["id_paciente"].str.encode(encoding="utf-8")
     ).apply(lambda x: hashlib.sha256(x).hexdigest())
 
-    df = df.drop(columns="papmiid")
+    df["rango_etario"] = pd.cut(df["edad"], bins=(0, 151, 10))
+
+    df = df.drop(columns=["papmiid"])
 
     return df
 
