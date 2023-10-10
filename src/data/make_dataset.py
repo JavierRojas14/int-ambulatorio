@@ -51,6 +51,7 @@ COLUMNAS_UTILES_TRACKCARE = [
     "Region",
     "Prevision",
     "Plan",
+    "Prestacion",
     "TipoAtencion",
     "FechaCita",
     "HoraCita",
