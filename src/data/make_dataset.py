@@ -58,6 +58,22 @@ COLUMNAS_UTILES_TRACKCARE = [
     "EstadoCita",
 ]
 
+CAMBIO_COMUNA_TRACKCARE = {
+    "Maipú": "MAIPU",
+    "Chillán": "CHILLAN",
+    "Chépica": "CHEPICA",
+    "Concón": "VALPARAISO",
+    "Copiapó": "COPIAPO",
+    "Curicó": "CURICO",
+    "Los Angeles": "LOS ÁNGELES",
+    "Quilpué": "QUILPUE",
+    "Valparaíso": "VALPARAISO",
+    "María Elena": "MARIA ELENA",
+    "Santa María": "SANTA MARIA",
+    "Chillán Viejo": "CHILLAN VIEJO",
+    "Tomé": "TOME",
+}
+
 
 def anonymize_value(row, column, salt):
     """
@@ -342,6 +358,7 @@ def leer_y_preprocesar_ambulatorio_trackcare(input_filepath):
     ).apply(lambda x: hashlib.sha256(x).hexdigest())
 
     df["rango_etario"] = pd.cut(df.edad, bins=range(0, 151, 10))
+    df["comuna"] = df["comuna"].replace(CAMBIO_COMUNA_TRACKCARE)
 
     df = df.drop(columns=["papmiid"])
 
@@ -358,24 +375,24 @@ def main(input_filepath, output_filepath):
     logger = logging.getLogger(__name__)
     logger.info("making final data set from raw data")
 
-    df_diagnosticos = leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath)
-    df_procedimientos = leer_y_preprocesar_ambulatorio_procedimientos(input_filepath)
+    # df_diagnosticos = leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath)
+    # df_procedimientos = leer_y_preprocesar_ambulatorio_procedimientos(input_filepath)
     df_track = leer_y_preprocesar_ambulatorio_trackcare(input_filepath)
 
-    df_diagnosticos.to_csv(
-        f"{output_filepath}/datos_limpios_diagnosticos.csv",
-        encoding="latin-1",
-        index=False,
-        sep=";",
-        errors="replace",
-    )
-    df_procedimientos.to_csv(
-        f"{output_filepath}/datos_limpios_procedimientos.csv",
-        encoding="latin-1",
-        index=False,
-        sep=";",
-        errors="replace",
-    )
+    # df_diagnosticos.to_csv(
+    #     f"{output_filepath}/datos_limpios_diagnosticos.csv",
+    #     encoding="latin-1",
+    #     index=False,
+    #     sep=";",
+    #     errors="replace",
+    # )
+    # df_procedimientos.to_csv(
+    #     f"{output_filepath}/datos_limpios_procedimientos.csv",
+    #     encoding="latin-1",
+    #     index=False,
+    #     sep=";",
+    #     errors="replace",
+    # )
 
     df_track.to_csv(
         f"{output_filepath}/datos_limpios_track.csv",
