@@ -15,9 +15,6 @@ from dotenv import find_dotenv, load_dotenv
 COLS_A_OCUPAR = {
     "Código Reserva Atención": str,
     "Rut Paciente": str,
-    "Nombre Paciente": str,
-    "Apellido Paterno Paciente": str,
-    "Apellido Materno Paciente": str,
     "Fecha Nacimiento": datetime,
     "sexo": str,
     "Fecha Reserva": datetime,
@@ -267,8 +264,6 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
             for archivo in glob.glob(f"{input_filepath}/diagnosticos/*.xlsx")
         )
     )
-
-    df = df.drop(columns=COLS_A_ELIMINAR)
 
     df["Código Diagnóstico"] = preprocesar_diagnostico(df["Código Diagnóstico"].astype(str))
     df["sexo"] = preprocesar_sexo(df["sexo"])
