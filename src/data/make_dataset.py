@@ -256,6 +256,7 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
     :return: The preprocessed diagnostic DataFrame.
     :rtype: pandas DataFrame
     """
+    # Lee la base de datos
     df = pd.concat(
         (
             pd.read_excel(archivo, usecols=COLS_A_OCUPAR.keys())
@@ -266,7 +267,7 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
     # Limpia el nombre de las columnas
     df = clean_column_names(df)
 
-    df["codigo_diagnostico"] = preprocesar_diagnostico(df["codigo_diagnostico"].astype(str))
+    # Limpia la columna de sexo
     df["sexo"] = preprocesar_sexo(df["sexo"])
 
     # Define las columnas del DataFrame y elimina la columna que no se repite (Detalle Atencion)
@@ -282,6 +283,8 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
     # df = salted_sha256_anonymize(df, COLS_A_HASHEAR)
     df = df.rename(columns={"rut_paciente": "id_paciente"})
 
+    # Preprocesa los codigos de diagnosticos de la base de datos
+    df["codigo_diagnostico"] = preprocesar_diagnostico(df["codigo_diagnostico"].astype(str))
     diccionario_diagnosticos = obtener_diccionario_traductor_diags()
     df["codigo_diagnostico"] = df["codigo_diagnostico"].replace(diccionario_diagnosticos)
     df = modificar_diags_largo_3(df)
