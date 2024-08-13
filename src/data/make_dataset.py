@@ -19,7 +19,6 @@ COLS_A_OCUPAR = {
     "sexo": str,
     "Fecha Reserva": datetime,
     "Fecha Atención": datetime,
-    "Rut Profesional": str,
     "Nombre Especialidad": str,
     "Código Diagnóstico": str,
     "Nombre Diagnóstico": str,
@@ -29,7 +28,6 @@ COLS_A_OCUPAR = {
 
 COLS_A_HASHEAR = [
     "Rut Paciente",
-    "Rut Profesional",
 ]
 
 COLS_A_ELIMINAR = [
@@ -282,7 +280,7 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
 
     # Procesa los RUTs
     # df = salted_sha256_anonymize(df, COLS_A_HASHEAR)
-    df = df.rename(columns={"rut_paciente": "ID_PACIENTE", "rut_profesional": "ID_PROFESIONAL"})
+    df = df.rename(columns={"rut_paciente": "ID_PACIENTE"})
 
     diccionario_diagnosticos = obtener_diccionario_traductor_diags()
     df["codigo_diagnostico"] = df["codigo_diagnostico"].replace(diccionario_diagnosticos)
