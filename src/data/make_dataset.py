@@ -265,29 +265,24 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
         )
     )
 
-    df["Código Diagnóstico"] = preprocesar_diagnostico(df["Código Diagnóstico"].astype(str))
+    # Limpia el nombre de las columnas
+    df = clean_column_names(df)
+
+    df["codigo_diagnostico"] = preprocesar_diagnostico(df["codigo_diagnostico"].astype(str))
     df["sexo"] = preprocesar_sexo(df["sexo"])
 
-    columnas_repetidas = [
-        "Código Reserva Atención",
-        "Rut Paciente",
-        "Fecha Nacimiento",
-        "sexo",
-        "Fecha Reserva",
-        "Fecha Atención",
-        "Rut Profesional",
-        "Nombre Especialidad",
-        "Código Diagnóstico",
-        "Nombre Diagnóstico",
-        "Año",
-    ]
-    columna_no_repetida = "Detalle Atención"
-    df[columna_no_repetida] = df[columna_no_repetida].astype(str)
+    # Define las columnas del DataFrame y elimina la columna que no se repite (Detalle Atencion)
+    columnas_repetidas = list(df.columns)
+    columna_no_repetida = "detalle_atencion"
+    columnas_repetidas.remove(columna_no_repetida)
 
+    # Convierte la columna sin repetir a string y une el DataFrame
+    df[columna_no_repetida] = df[columna_no_repetida].astype(str)
     df = unir_filas_repetidas(df, columnas_repetidas, columna_no_repetida)
+
+    # Procesa los RUTs
     # df = salted_sha256_anonymize(df, COLS_A_HASHEAR)
-    df = df.rename(columns={"Rut Paciente": "ID_PACIENTE", "Rut Profesional": "ID_PROFESIONAL"})
-    df = clean_column_names(df)
+    df = df.rename(columns={"rut_paciente": "ID_PACIENTE", "rut_profesional": "ID_PROFESIONAL"})
 
     diccionario_diagnosticos = obtener_diccionario_traductor_diags()
     df["codigo_diagnostico"] = df["codigo_diagnostico"].replace(diccionario_diagnosticos)
