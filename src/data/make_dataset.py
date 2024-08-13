@@ -280,7 +280,7 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
 
     # Procesa los RUTs
     # df = salted_sha256_anonymize(df, COLS_A_HASHEAR)
-    df = df.rename(columns={"rut_paciente": "ID_PACIENTE"})
+    df = df.rename(columns={"rut_paciente": "id_paciente"})
 
     diccionario_diagnosticos = obtener_diccionario_traductor_diags()
     df["codigo_diagnostico"] = df["codigo_diagnostico"].replace(diccionario_diagnosticos)
