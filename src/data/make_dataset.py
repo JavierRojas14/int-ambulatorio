@@ -307,8 +307,8 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
 
 def clean_column_names(df):
     """
-    Cleans the column names of a DataFrame by converting to lowercase and replacing spaces with
-    underscores.
+    Cleans the column names of a DataFrame by converting to lowercase, replacing spaces with
+    underscores, ensuring only a single underscore between words, and removing miscellaneous symbols.
 
     :param df: The input DataFrame.
     :type df: pandas DataFrame
@@ -318,14 +318,19 @@ def clean_column_names(df):
     """
     tmp = df.copy()
 
-    # Clean and transform the column names using vectorization
+    # Clean and transform the column names
     cleaned_columns = (
         df.columns.str.lower()
         .str.normalize("NFD")
         .str.encode("ascii", "ignore")
         .str.decode("utf-8")
+        .str.replace(
+            r"[^\w\s]", "", regex=True
+        )  # Remove all non-alphanumeric characters except spaces
+        .str.replace(r"\s+", "_", regex=True)  # Replace spaces with underscores
+        .str.replace(r"_+", "_", regex=True)  # Ensure only a single underscore between words
+        .str.strip("_")
     )
-    cleaned_columns = cleaned_columns.str.replace(" ", "_")
 
     # Assign the cleaned column names back to the DataFrame
     tmp.columns = cleaned_columns
