@@ -4,9 +4,11 @@ import hashlib
 import json
 import logging
 import os
+import time
 
 from datetime import datetime
 from pathlib import Path
+from functools import wraps
 
 import click
 import pandas as pd
@@ -105,6 +107,22 @@ GLOSAS_CONSULTAS_PROCEDIMIENTOS = [
 GLOSAS_CONSULTAS_MISCALENEAS = ["Consulta Abreviada", "Control Post Operado"]
 
 
+def medir_tiempo(func):
+    @wraps(func)
+    def envoltura(*args, **kwargs):
+        inicio = time.time()  # Marca el tiempo de inicio
+        resultado = func(*args, **kwargs)  # Ejecuta la función original
+        fin = time.time()  # Marca el tiempo de finalización
+        tiempo_transcurrido = fin - inicio  # Calcula el tiempo transcurrido
+
+        # Imprime el nombre de la función y el tiempo de ejecución
+        print(f"Función '{func.__name__}' ejecutada en {tiempo_transcurrido:.4f} segundos")
+
+        return resultado  # Devuelve el resultado original de la función
+
+    return envoltura
+
+
 def anonymize_value(row, column, salt):
     """
     Anonymizes a single value using salted SHA-256 hashing.
@@ -166,6 +184,7 @@ def preprocesar_diagnostico(serie_diagnostico):
     return serie_diagnostico.str.replace("\.|\s|_", "", regex=True)
 
 
+@medir_tiempo
 def preprocesar_sexo(serie_sexo):
     """
     Preprocesses a series of genders by removing leading/trailing whitespaces and
@@ -246,6 +265,7 @@ def modificar_diags_largo_5(df):
     return tmp
 
 
+@medir_tiempo
 def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
     """
     Reads and preprocesses diagnostic data from multiple Excel files.
@@ -296,6 +316,7 @@ def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
 ########################## Procedimientos ####################################
 
 
+@medir_tiempo
 def clean_column_names(df):
     """
     Cleans the column names of a DataFrame by converting to lowercase, replacing spaces with
