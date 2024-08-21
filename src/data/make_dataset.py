@@ -98,10 +98,6 @@ def medir_tiempo(func):
     return envoltura
 
 
-########################## Procedimientos ####################################
-
-
-@medir_tiempo
 def clean_column_names(df):
     """
     Cleans the column names of a DataFrame by converting to lowercase, replacing spaces with
@@ -133,6 +129,9 @@ def clean_column_names(df):
     tmp.columns = cleaned_columns
 
     return tmp
+
+
+########################## Procedimientos ####################################
 
 
 def leer_y_preprocesar_ambulatorio_procedimientos(input_filepath):
