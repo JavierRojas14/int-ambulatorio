@@ -73,21 +73,30 @@ GLOSAS_CONSULTAS_MISCALENEAS = ["Consulta Abreviada", "Control Post Operado"]
 
 
 def leer_y_preprocesar_ambulatorio_trackcare(input_filepath):
+    # Lee las bases de datos
+    ruta_archivos = f"{input_filepath}/trackcare/*.xls"
     df = pd.concat(
         (
             pd.read_csv(archivo, encoding="latin-1", sep="\t", usecols=COLUMNAS_UTILES_TRACKCARE)
-            for archivo in glob.glob(f"{input_filepath}/trackcare/*.xls")
+            for archivo in glob.glob(ruta_archivos)
         )
     )
 
+    # Limpia el nombre de las columnas
     df = clean_column_names(df)
+
+    # Agrega una columna de la fecha y hora de la atencion
     df["hora_completa_cita"] = pd.to_datetime(df["fechacita"] + " " + df["horacita"], dayfirst=True)
 
+    # Formatea el id del paciente
     df["id_paciente"] = (
         df["papmiid"].str.lower().str.replace("\.|-|\s", "", regex=True).str[:-1].astype(str)
     )
 
+    # Agrega una columna del rangio etario
     df["rango_etario"] = pd.cut(df.edad, bins=range(0, 151, 10))
+
+    # Reemplaza valores en las columnas comuna y tipoatencion
     df["comuna"] = df["comuna"].replace(CAMBIO_COMUNA_TRACKCARE)
     df["tipoatencion"] = (
         df["tipoatencion"]
@@ -97,6 +106,7 @@ def leer_y_preprocesar_ambulatorio_trackcare(input_filepath):
         .replace(GLOSAS_CONSULTAS_MISCALENEAS, "Miscaleneo")
     )
 
+    # Elimina el RUT de la persona
     df = df.drop(columns=["papmiid"])
 
     return df
