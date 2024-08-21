@@ -44,6 +44,9 @@ def leer_his(input_filepath):
     # Limpia la columna de sexo
     df["sexo"] = preprocesar_sexo(df["sexo"])
 
+    # Convierte la fecha de nacimiento a datetime
+    df["fecha_nacimiento"] = pd.to_datetime(df["fecha_nacimiento"], dayfirst=True, errors="coerce")
+
     # Define las columnas del DataFrame y elimina la columna que no se repite (Detalle Atencion)
     columnas_repetidas = list(df.columns)
     columna_no_repetida = "detalle_atencion"
