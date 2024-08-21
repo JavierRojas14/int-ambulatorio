@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
-import time
-
 from pathlib import Path
-from functools import wraps
 
 import click
 from dotenv import find_dotenv, load_dotenv
-
 from his import leer_his
 from procedimientos import leer_procedimientos
 from trackcare import leer_trackcare
