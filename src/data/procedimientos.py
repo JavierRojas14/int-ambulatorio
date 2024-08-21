@@ -1,7 +1,7 @@
 import pandas as pd
 import glob
 
-from make_dataset import clean_column_names
+from funciones_auxiliares import clean_column_names
 
 
 def leer_procedimientos(input_filepath):
