@@ -1,3 +1,6 @@
+import time
+
+
 def clean_column_names(df):
     """
     Cleans the column names of a DataFrame by converting to lowercase, replacing spaces with
@@ -29,3 +32,15 @@ def clean_column_names(df):
     tmp.columns = cleaned_columns
 
     return tmp
+
+
+def decorador_tiempo(func):
+    def wrapper(*args, **kwargs):
+        inicio = time.time()
+        resultado = func(*args, **kwargs)
+        fin = time.time()
+        tiempo_ejecucion = fin - inicio
+        print(f">> {func.__name__} se ejecutó en {tiempo_ejecucion:.4f} segundos")
+        return resultado
+
+    return wrapper

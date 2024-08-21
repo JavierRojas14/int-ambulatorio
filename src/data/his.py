@@ -1,7 +1,7 @@
 import glob
 
 import pandas as pd
-from funciones_auxiliares import clean_column_names
+from funciones_auxiliares import clean_column_names, decorador_tiempo
 
 COLUMNAS_UTILES_HIS = [
     "Código Reserva Atención",
@@ -18,6 +18,7 @@ COLUMNAS_UTILES_HIS = [
 ]
 
 
+@decorador_tiempo
 def leer_his(input_filepath):
     """
     Reads and preprocesses diagnostic data from multiple Excel files.
