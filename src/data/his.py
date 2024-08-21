@@ -34,7 +34,7 @@ def leer_his(input_filepath):
     df = pd.concat(
         (
             pd.read_excel(archivo, usecols=COLUMNAS_UTILES_HIS)
-            for archivo in glob.glob(f"{input_filepath}/diagnosticos/*.xlsx")
+            for archivo in glob.glob(f"{input_filepath}/his/*.xlsx")
         )
     )
 
