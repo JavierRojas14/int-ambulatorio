@@ -1,7 +1,6 @@
 import glob
 
 import pandas as pd
-
 from funciones_auxiliares import clean_column_names
 
 COLUMNAS_UTILES_HIS = [
