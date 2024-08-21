@@ -22,6 +22,7 @@ def leer_procedimientos(input_filepath):
     :return: The preprocessed procedure DataFrame.
     :rtype: pandas DataFrame
     """
+    print("> Leyendo Procedimientos")
     # Lee las bases de procedimientos
     ruta_archivos = f"{input_filepath}/procedimientos/*.xlsx"
     df = pd.concat((pd.read_excel(archivo) for archivo in glob.glob(ruta_archivos)))
