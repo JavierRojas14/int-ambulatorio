@@ -29,6 +29,7 @@ def leer_his(input_filepath):
     :rtype: pandas DataFrame
     """
     # Lee la base de datos
+    print(glob.glob(f"{input_filepath}/diagnosticos/*.xlsx"))
     df = pd.concat(
         (
             pd.read_excel(archivo, usecols=COLUMNAS_UTILES_HIS)
@@ -156,3 +157,7 @@ def modificar_diags_largo_5(df):
     ].str[:4]
 
     return tmp
+
+
+if __name__ == "__main__":
+    leer_his("data/raw")
