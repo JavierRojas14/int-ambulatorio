@@ -14,16 +14,27 @@ def leer_procedimientos(input_filepath):
     :return: The preprocessed procedure DataFrame.
     :rtype: pandas DataFrame
     """
-    df = pd.concat(
-        (pd.read_excel(archivo) for archivo in glob.glob(f"{input_filepath}/procedimientos/*.xlsx"))
-    ).drop(columns=["N°", "Nombre", "Médico"])
+    # Lee las bases de procedimientos
+    ruta_archivos = f"{input_filepath}/procedimientos/*.xlsx"
+    df = pd.concat((pd.read_excel(archivo) for archivo in glob.glob(ruta_archivos)))
 
+    # Elimina las columnas innecesarias
+    df = df.drop(columns=["N°", "Nombre", "Médico"])
+
+    # Renombra columna 1
     df = df.rename(columns={"Columna1": "unidad_que_la_realiza"})
+
+    # Limpia los nombres de las columnas
     df = clean_column_names(df)
+
+    # Solamente deja los procedimientos de atencion abierta
     df = df.query("`cerrado/abierto` == 'ABIERTA'").copy()
+
+    # Limpia los RUTs
     df["rut"] = df.rut.str.lower().str.replace("\.|-|\s", "", regex=True)
     df["rut_cortado"] = df.rut.str[:-1]
 
+    # Elimina las columnas de RUTs
     df = df.drop(columns=["rut", "rut_cortado"])
 
     return df
