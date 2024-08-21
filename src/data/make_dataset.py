@@ -25,9 +25,9 @@ def main(input_filepath, output_filepath):
     df_track = leer_trackcare(input_filepath)
 
     # Guarda bases de ambulatorio
-    df_his.to_csv(f"{output_filepath}/his_procesada.csv")
-    df_procedimientos.to_csv(f"{output_filepath}/procedimientos_procesada.csv")
-    df_track.to_csv(f"{output_filepath}/trackcare_procesada.csv")
+    df_his.to_csv(f"{output_filepath}/his_procesada.csv", index=False)
+    df_procedimientos.to_csv(f"{output_filepath}/procedimientos_procesada.csv", index=False)
+    df_track.to_csv(f"{output_filepath}/trackcare_procesada.csv", index=False)
 
 
 if __name__ == "__main__":
