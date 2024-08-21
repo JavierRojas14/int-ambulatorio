@@ -39,8 +39,7 @@ def leer_procedimientos(input_filepath):
     df = df.query("cerradoabierto == 'ABIERTA'").copy()
 
     # Limpia los RUTs
-    df["rut"] = df.rut.str.lower().str.replace("\.|-|\s", "", regex=True)
-    df["rut_cortado"] = df.rut.str[:-1]
+    df["id_paciente"] = unificar_formato_ruts(df["rut"], eliminar_digito_verificador=True)
 
     # Elimina las columnas de RUTs
     df = df.drop(columns=["rut", "rut_cortado"])
