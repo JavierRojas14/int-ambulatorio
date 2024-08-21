@@ -1,7 +1,7 @@
 import pandas as pd
 import glob
 
-from make_dataset import clean_column_names
+from funciones_auxiliares import clean_column_names
 
 
 COLUMNAS_UTILES_TRACKCARE = [
@@ -72,7 +72,7 @@ GLOSAS_CONSULTAS_PROCEDIMIENTOS = [
 GLOSAS_CONSULTAS_MISCALENEAS = ["Consulta Abreviada", "Control Post Operado"]
 
 
-def leer_y_preprocesar_ambulatorio_trackcare(input_filepath):
+def leer_trackcare(input_filepath):
     # Lee las bases de datos
     ruta_archivos = f"{input_filepath}/trackcare/*.xls"
     df = pd.concat(
