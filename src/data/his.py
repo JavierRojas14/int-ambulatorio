@@ -2,7 +2,7 @@ import glob
 
 import pandas as pd
 
-from make_dataset import clean_column_names
+from funciones_auxiliares import clean_column_names
 
 COLUMNAS_UTILES_HIS = [
     "Código Reserva Atención",
@@ -19,7 +19,7 @@ COLUMNAS_UTILES_HIS = [
 ]
 
 
-def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath),
+def leer_his(input_filepath):
     """
     Reads and preprocesses diagnostic data from multiple Excel files.
 
@@ -79,7 +79,6 @@ def preprocesar_diagnostico(serie_diagnostico):
     return serie_diagnostico.str.replace("\.|\s|_", "", regex=True)
 
 
-@medir_tiempo
 def preprocesar_sexo(serie_sexo):
     """
     Preprocesses a series of genders by removing leading/trailing whitespaces and
