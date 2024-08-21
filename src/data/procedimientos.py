@@ -1,12 +1,17 @@
 """Funciones para procesar la base de datos de procedimientos del INT
 """
 
-import pandas as pd
 import glob
 
-from funciones_auxiliares import clean_column_names
+import pandas as pd
+from funciones_auxiliares import (
+    clean_column_names,
+    decorador_tiempo,
+    unificar_formato_ruts,
+)
 
 
+@decorador_tiempo
 def leer_procedimientos(input_filepath):
     """
     Reads and preprocesses procedure data from multiple Excel files.
