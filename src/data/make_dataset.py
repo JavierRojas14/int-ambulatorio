@@ -10,6 +10,7 @@ from dotenv import find_dotenv, load_dotenv
 
 from his import leer_his
 from procedimientos import leer_procedimientos
+from trackcare import leer_trackcare
 
 
 @click.command()
@@ -23,19 +24,12 @@ def main(input_filepath, output_filepath):
     logger.info("making final data set from raw data")
 
     # df_his = leer_his(input_filepath)
-    df_procedimientos = leer_procedimientos(input_filepath)
-    # df_track = leer_y_preprocesar_ambulatorio_trackcare(input_filepath)
+    # df_procedimientos = leer_procedimientos(input_filepath)
+    df_track = leer_trackcare(input_filepath)
 
     # df_his.to_csv(f"{output_filepath}/his_procesada.csv")
-    df_procedimientos.to_csv(f"{output_filepath}/datos_limpios_procedimientos.csv")
-
-    # df_track.to_csv(
-    #     f"{output_filepath}/datos_limpios_track.csv",
-    #     encoding="latin-1",
-    #     index=False,
-    #     sep=";",
-    #     errors="replace",
-    # )
+    # df_procedimientos.to_csv(f"{output_filepath}/datos_limpios_procedimientos.csv")
+    df_track.to_csv(f"{output_filepath}/datos_limpios_track.csv")
 
 
 if __name__ == "__main__":
