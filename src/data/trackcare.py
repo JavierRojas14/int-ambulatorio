@@ -77,6 +77,7 @@ GLOSAS_CONSULTAS_MISCALENEAS = ["Consulta Abreviada", "Control Post Operado"]
 
 @decorador_tiempo
 def leer_trackcare(input_filepath):
+    print("> Leyendo TrackCare")
     # Lee las bases de datos
     ruta_archivos = f"{input_filepath}/trackcare/*.xls"
     df = pd.concat(
