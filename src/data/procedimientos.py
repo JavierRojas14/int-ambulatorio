@@ -42,6 +42,10 @@ def leer_procedimientos(input_filepath):
     df["id_paciente"] = unificar_formato_ruts(df["rut"], eliminar_digito_verificador=True)
 
     # Elimina las columnas de RUTs
-    df = df.drop(columns=["rut", "rut_cortado"])
+    df = df.drop(columns=["rut"])
 
     return df
+
+
+if __name__ == "__main__":
+    leer_procedimientos("data/raw")
