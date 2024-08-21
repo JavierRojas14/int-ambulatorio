@@ -6,37 +6,12 @@ import logging
 import os
 import time
 
-from datetime import datetime
 from pathlib import Path
 from functools import wraps
 
 import click
 import pandas as pd
 from dotenv import find_dotenv, load_dotenv
-
-COLS_A_OCUPAR = {
-    "Código Reserva Atención": str,
-    "Rut Paciente": str,
-    "Fecha Nacimiento": datetime,
-    "sexo": str,
-    "Fecha Reserva": datetime,
-    "Fecha Atención": datetime,
-    "Nombre Especialidad": str,
-    "Código Diagnóstico": str,
-    "Nombre Diagnóstico": str,
-    "Detalle Atención": str,
-    "Año": pd.Int16Dtype,
-}
-
-COLS_A_HASHEAR = [
-    "Rut Paciente",
-]
-
-COLS_A_ELIMINAR = [
-    "Nombre Paciente",
-    "Apellido Paterno Paciente",
-    "Apellido Materno Paciente",
-]
 
 
 COLUMNAS_UTILES_TRACKCARE = [
@@ -121,54 +96,6 @@ def medir_tiempo(func):
         return resultado  # Devuelve el resultado original de la función
 
     return envoltura
-
-
-def anonymize_value(row, column, salt):
-    """
-    Anonymizes a single value using salted SHA-256 hashing.
-
-    :param row: The row of the DataFrame.
-    :type row: pandas Series
-    :param column: The column name.
-    :type column: str
-    :param salt: The salt value.
-    :type salt: bytes
-
-    :return: The anonymized value.
-    :rtype: str
-    """
-    return hashlib.sha256(salt + str(row[column]).encode()).hexdigest()
-
-
-def salted_sha256_anonymize(df, columns_to_anonymize):
-    """
-    Anonymizes specified columns in a DataFrame using salted SHA-256 hashing.
-
-    :param df: The input DataFrame.
-    :type df: pandas DataFrame
-    :param columns_to_anonymize: A list of column names to be anonymized.
-    :type columns_to_anonymize: list
-
-    :return: The anonymized DataFrame.
-    :rtype: pandas DataFrame
-    """
-    anonymized_df = df.copy()
-
-    salts = {}
-
-    for column in columns_to_anonymize:
-        # Generate a random salt for each column
-        salt = os.urandom(16)
-        salts[column] = salt.hex()
-
-        # Pseudonymize the column values with salted SHA-256
-        anonymized_df[column] = df.apply(anonymize_value, args=(column, salt), axis=1)
-
-    # Save the salts to a JSON file
-    with open("data/processed/salts.json", "w") as file:
-        json.dump(salts, file, indent=1)
-
-    return anonymized_df
 
 
 ########################## Procedimientos ####################################

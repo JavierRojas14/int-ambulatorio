@@ -1,4 +1,25 @@
-def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath):
+import glob
+
+import pandas as pd
+
+from make_dataset import clean_column_names
+
+COLUMNAS_UTILES_HIS = [
+    "Código Reserva Atención",
+    "Rut Paciente",
+    "Fecha Nacimiento",
+    "sexo",
+    "Fecha Reserva",
+    "Fecha Atención",
+    "Nombre Especialidad",
+    "Código Diagnóstico",
+    "Nombre Diagnóstico",
+    "Detalle Atención",
+    "Año",
+]
+
+
+def leer_y_preprocesar_ambulatorio_diagnosticos(input_filepath),
     """
     Reads and preprocesses diagnostic data from multiple Excel files.
 
