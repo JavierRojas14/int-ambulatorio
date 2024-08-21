@@ -31,7 +31,7 @@ def leer_procedimientos(input_filepath):
     df = clean_column_names(df)
 
     # Solamente deja los procedimientos de atencion abierta
-    df = df.query("`cerrado/abierto` == 'ABIERTA'").copy()
+    df = df.query("cerradoabierto == 'ABIERTA'").copy()
 
     # Limpia los RUTs
     df["rut"] = df.rut.str.lower().str.replace("\.|-|\s", "", regex=True)
