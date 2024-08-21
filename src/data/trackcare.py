@@ -1,8 +1,11 @@
-import pandas as pd
 import glob
 
-from funciones_auxiliares import clean_column_names
-
+import pandas as pd
+from funciones_auxiliares import (
+    clean_column_names,
+    decorador_tiempo,
+    unificar_formato_ruts,
+)
 
 COLUMNAS_UTILES_TRACKCARE = [
     "PAPMIID",
@@ -72,6 +75,7 @@ GLOSAS_CONSULTAS_PROCEDIMIENTOS = [
 GLOSAS_CONSULTAS_MISCALENEAS = ["Consulta Abreviada", "Control Post Operado"]
 
 
+@decorador_tiempo
 def leer_trackcare(input_filepath):
     # Lee las bases de datos
     ruta_archivos = f"{input_filepath}/trackcare/*.xls"
@@ -110,3 +114,7 @@ def leer_trackcare(input_filepath):
     df = df.drop(columns=["papmiid"])
 
     return df
+
+
+if __name__ == "__main__":
+    leer_trackcare("data/raw")
