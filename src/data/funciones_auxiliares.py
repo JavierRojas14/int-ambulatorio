@@ -44,3 +44,33 @@ def decorador_tiempo(func):
         return resultado
 
     return wrapper
+
+
+def unificar_formato_ruts(columna_ruts: pd.Series, digito_verificador=True) -> pd.Series:
+    """
+    Funcion que consolida el formato de los RUTs de una persona. Elimina puntos, guiones y deja
+    sin digito verificador. Los RUTs entrantes DEBEN tener el digito verificador si o si.
+
+    Parámetros:
+    columna_ruts (pd.Series): Serie de pandas que contiene los RUTs a anonimizar.
+
+    Retorna:
+    pd.Series: Serie de pandas con los RUTs anonimizados.
+    """
+    # Elimina puntos, guiones, espacios y 0s al inicio. Ademas convierte las letras a mayuscula
+    ruts_limpios = (
+        columna_ruts.astype(str)
+        .str.replace(r"\.|-|\s", "", regex=True)
+        .str.strip()
+        .str.upper()
+        .str.lstrip("0")
+    )
+
+    if digito_verificador:
+        # Elimina el digito verificador si es que lo tiene
+        ruts_limpios = ruts_limpios.str[:-1]
+
+    # Elimina las K que podrian haber quedado al final luego de la limpiza (por haber imputado -Kk)
+    ruts_limpios = ruts_limpios.str.rstrip("K")
+
+    return ruts_limpios
