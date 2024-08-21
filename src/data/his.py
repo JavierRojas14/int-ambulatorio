@@ -32,7 +32,7 @@ def leer_his(input_filepath):
     # Lee la base de datos
     df = pd.concat(
         (
-            pd.read_excel(archivo, usecols=COLS_A_OCUPAR.keys())
+            pd.read_excel(archivo, usecols=COLUMNAS_UTILES_HIS)
             for archivo in glob.glob(f"{input_filepath}/diagnosticos/*.xlsx")
         )
     )
