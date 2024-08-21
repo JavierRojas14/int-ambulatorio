@@ -29,7 +29,7 @@ def leer_his(input_filepath):
     :rtype: pandas DataFrame
     """
     # Lee la base de datos
-    print(glob.glob(f"{input_filepath}/diagnosticos/*.xlsx"))
+    print("> Leyendo la base de datos HIS")
     df = pd.concat(
         (
             pd.read_excel(archivo, usecols=COLUMNAS_UTILES_HIS)
