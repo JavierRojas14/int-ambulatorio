@@ -1,3 +1,6 @@
+"""Funciones para procesar la base de datos de procedimientos del INT
+"""
+
 import pandas as pd
 import glob
 
