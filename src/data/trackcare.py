@@ -93,9 +93,7 @@ def leer_trackcare(input_filepath):
     df["hora_completa_cita"] = pd.to_datetime(df["fechacita"] + " " + df["horacita"], dayfirst=True)
 
     # Formatea el id del paciente
-    df["id_paciente"] = (
-        df["papmiid"].str.lower().str.replace("\.|-|\s", "", regex=True).str[:-1].astype(str)
-    )
+    df["id_paciente"] = unificar_formato_ruts(df["papmiid"], eliminar_digito_verificador=True)
 
     # Agrega una columna del rangio etario
     df["rango_etario"] = pd.cut(df.edad, bins=range(0, 151, 10))
