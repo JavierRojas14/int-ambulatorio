@@ -21,6 +21,8 @@ COLUMNAS_UTILES_TRACKCARE = [
     "FechaCita",
     "HoraCita",
     "EstadoCita",
+    "Especialidad",
+    "TipoProfesional",
 ]
 
 CAMBIO_COMUNA_TRACKCARE = {
