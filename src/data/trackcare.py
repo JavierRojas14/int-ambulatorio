@@ -93,6 +93,9 @@ def leer_trackcare(input_filepath):
     # Agrega una columna de la fecha y hora de la atencion
     df["hora_completa_cita"] = pd.to_datetime(df["fechacita"] + " " + df["horacita"], dayfirst=True)
 
+    # Agrega columna de anio
+    df["ano"] = df["hora_completa_cita"].dt.year
+
     # Formatea el id del paciente
     df["id_paciente"] = unificar_formato_ruts(df["papmiid"], eliminar_digito_verificador=True)
 
@@ -116,4 +119,5 @@ def leer_trackcare(input_filepath):
 
 
 if __name__ == "__main__":
-    leer_trackcare("data/raw")
+    df = leer_trackcare("data/raw")
+    df.to_csv("data/processed/trackcare_procesada.csv", index=False)
