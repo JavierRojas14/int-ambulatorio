@@ -17,6 +17,60 @@ COLUMNAS_UTILES_HIS = [
     "Año",
 ]
 
+AGRUPACIONES_ESPECIALIDAD = {
+    "Broncopulmonar": [
+        "AVNIA",
+        "BRONCOPULMONAR ADULTO INT",
+        "BRONQUIECTACIAS",
+        "COMPIN",
+        "DERRAME PLEURAL",
+        "EPOC TIOTROPIO",
+        "ENFERMEDADES PROFESIONALES",
+        "EX. BRONCOSCOPIA",
+        "FIBROSIS PULMONAR",
+        "GES ASMA",
+        "GES EPOC",
+        "GES FIBROSIS QUISTICA",
+        "HIPERTENSION PULMONAR",
+        "INGRESO PROGRAMA DE OXIGENO",
+        "OXIGENOTERAPIA",
+        "PESQUISA CANCER PULMONAR",
+        "PRIORITARIO BRONCOPULMONAR",
+        "PULMON REUMATOLÓGICO",
+        "TABACO GRUPAL",
+        "TABACO INDIVIDUAL",
+        "TBC",
+    ],
+    "Cardiocirugia": [
+        "CARDIOCIRUGIA",
+        "CARDIOPATIA CONGENITA",
+        "TRASPLANTE CARDIACO",
+        "PATOLOGÍA DE LA AORTA TORÁCICA-MARFAN",
+    ],
+    "Cirugia de Torax": [
+        "CIRUGIA DE TORAX",
+        "ONCOLOGIA",
+        "TRASPLANTE PULMONAR",
+    ],
+    "Unidad del Sueno": [
+        "UNIDAD DE SUEÑO",
+        "UNIDAD DE SUEÑO-OTORRINOLARINGOLOGO",
+    ],
+    "Cardiologia": [
+        "ARRITMIA",
+        "CARDIOLOGIA",
+        "EX. ECOCARDIO URGENCIA",
+        "EX. ECOCARDIOGRAMA",
+        "EX. HOLTER CONGENITOS INT",
+        "EX. TEST DE ESFUERZO CONGENITO",
+        "GES MARCAPASO",
+        "GES MARCAPASO PRE QUIRÚRGICO",
+        "DESFIBRILADORES / RESINCRONIZADORES",
+        "ELECTROFISIOLOGIA",
+    ],
+    "Cuidados Paliativos": ["GES CUIDADOS PALIATIVOS"],
+}
+
 
 @decorador_tiempo
 def leer_his(input_filepath):
@@ -66,6 +120,9 @@ def leer_his(input_filepath):
     df["codigo_diagnostico"] = df["codigo_diagnostico"].replace(diccionario_diagnosticos)
     df = modificar_diags_largo_3(df)
     df = modificar_diags_largo_5(df)
+
+    # Agrega la columna de especialidad agrupada
+    df = agrupar_especialidades(df)
 
     return df
 
@@ -159,6 +216,15 @@ def modificar_diags_largo_5(df):
     tmp.loc[mask_largo_5_con_guion, "codigo_diagnostico"] = tmp.loc[
         mask_largo_5_con_guion, "codigo_diagnostico"
     ].str[:4]
+
+    return tmp
+
+
+def agrupar_especialidades(df):
+    tmp = df.copy()
+
+    for nuevo_valor, a_cambiar in AGRUPACIONES_ESPECIALIDAD.items():
+        tmp["especialidad_agrupada"] = tmp["nombre_especialidad"].replace(a_cambiar, nuevo_valor)
 
     return tmp
 
