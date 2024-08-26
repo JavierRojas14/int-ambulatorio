@@ -221,10 +221,13 @@ def modificar_diags_largo_5(df):
 
 
 def agrupar_especialidades(df):
+    # Agrega columna para agrupar por distintas especialidades internas a las REM
     tmp = df.copy()
+    tmp["especialidad_agrupada"] = tmp["nombre_especialidad"]
 
+    # Reasigna especialidades
     for nuevo_valor, a_cambiar in AGRUPACIONES_ESPECIALIDAD.items():
-        tmp["especialidad_agrupada"] = tmp["nombre_especialidad"].replace(a_cambiar, nuevo_valor)
+        tmp["especialidad_agrupada"] = tmp["especialidad_agrupada"].replace(a_cambiar, nuevo_valor)
 
     return tmp
 
