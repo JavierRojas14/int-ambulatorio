@@ -230,4 +230,5 @@ def agrupar_especialidades(df):
 
 
 if __name__ == "__main__":
-    leer_his("data/raw")
+    df_his = leer_his("data/raw")
+    df_his.to_csv("data/processed/his_procesada.csv", index=False)
