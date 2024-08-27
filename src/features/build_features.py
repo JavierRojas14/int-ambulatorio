@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 def formatear_fechas_ambulatorio(df_procesada):
@@ -258,3 +258,25 @@ def leer_cie_y_unir_a_datos(df, columna_diagnostico_df):
 
     union = pd.merge(df, cie, how="left", left_on=columna_diagnostico_df, right_on="Código")
     return union
+
+
+def obtener_distribucion_consultas(df, agrupacion):
+    # Agrupa segun lo especificado por el usuario y separa por pacientes
+    agrupacion_por_paciente = agrupacion + ["id_paciente"]
+
+    # Obtiene la cantidad de consultas por paciente
+    consultas_por_paciente = (
+        df.groupby(agrupacion_por_paciente).size().reset_index(name="n_consultas")
+    )
+
+    # Obtiene el desempeno de las consultas
+    distribucion_consultas = consultas_por_paciente.groupby(agrupacion)["n_consultas"].describe()
+
+    # Obtiene la cantidad de consultas totales por especialidad
+    cantidad_consultas = df.groupby(agrupacion).size()
+    cantidad_consultas.name = "cantidad_consultas"
+
+    # Agrega la cantidad de consultas por especialidad
+    distribucion_consultas = distribucion_consultas.join(cantidad_consultas)
+
+    return distribucion_consultas, consultas_por_paciente
