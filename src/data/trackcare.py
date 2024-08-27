@@ -76,6 +76,35 @@ GLOSAS_CONSULTAS_PROCEDIMIENTOS = [
 
 GLOSAS_CONSULTAS_MISCALENEAS = ["Consulta Abreviada", "Control Post Operado"]
 
+AGRUPACIONES_ESPECIALIDAD = {
+    "ANESTESIOLOGÍA": [],
+    "CARDIOLOGÍA": ["Cardiología", "Cardiología Adulto"],
+    "CIRUGÍA CARDIOVASCULAR": [
+        "Cardiocirugía",
+        "Cardiocirugía Adulto",
+        "Cirugía Adulto",
+        "Cirugía General",
+        "Cirugía Vascular Periférica",
+    ],
+    "CIRUGÍA DE TÓRAX": ["Cirugía Tórax"],
+    "ENFERMEDADES RESPIRATORIAS ADULTO": ["Broncopulmonar", "Broncopulmonar Adulto"],
+    "ENFERMERÍA": [],
+    "EQUIPO MULTIDISCIPLINARIO": [],
+    "GENÉTICA CLÍNICA": [],
+    "INFECTOLOGÍA": ["Infectología Adulto"],
+    "MEDICINA FÍSICA Y REHABILITACIÓN": [],
+    "MEDICINA INTERNA": ["Med. Interna"],
+    "NUTRICIÓN": ["Nutrición"],
+    "ODONTOLOGÍA": [],
+    "ONCOLOGÍA": ["Oncología"],
+    "PALIATIVISTA": [],
+    "PSICOLOGÍA": ["Psicología"],
+    "PSIQUIATRÍA ADULTO": ["Psiquiatría Adulto"],
+    "QUÍMICA Y FARMACIA": [],
+    "RADIOTERAPEUTA": [],
+    "TRABAJO SOCIAL": [],
+}
+
 
 @decorador_tiempo
 def leer_trackcare(input_filepath):
@@ -114,10 +143,26 @@ def leer_trackcare(input_filepath):
         .replace(GLOSAS_CONSULTAS_MISCALENEAS, "Miscaleneo")
     )
 
+    # Agrega columna de especialidades renombradas
+    df["especialidad"] = df["especialidad"].str.strip()
+    df = agrupar_especialidades(df)
+
     # Elimina el RUT de la persona
     df = df.drop(columns=["papmiid"])
 
     return df
+
+
+def agrupar_especialidades(df):
+    # Agrega columna para agrupar por distintas especialidades internas a las REM
+    tmp = df.copy()
+    tmp["especialidad_agrupada"] = tmp["especialidad"]
+
+    # Reasigna especialidades
+    for nuevo_valor, a_cambiar in AGRUPACIONES_ESPECIALIDAD.items():
+        tmp["especialidad_agrupada"] = tmp["especialidad_agrupada"].replace(a_cambiar, nuevo_valor)
+
+    return tmp
 
 
 if __name__ == "__main__":
