@@ -37,7 +37,7 @@ def leer_procedimientos(input_filepath):
     df = clean_column_names(df)
 
     # Solamente deja los procedimientos de atencion abierta
-    df = df.query("cerradoabierto == 'ABIERTA'").copy()
+    # df = df.query("cerradoabierto == 'ABIERTA'").copy()
 
     # Limpia los RUTs
     df["id_paciente"] = unificar_formato_ruts(df["rut"], eliminar_digito_verificador=True)
