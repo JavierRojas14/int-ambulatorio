@@ -49,4 +49,5 @@ def leer_procedimientos(input_filepath):
 
 
 if __name__ == "__main__":
-    leer_procedimientos("data/raw")
+    df = leer_procedimientos("data/raw")
+    df.to_csv("data/processed/procedimientos_procesada.csv", index=False)
