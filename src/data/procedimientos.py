@@ -11,10 +11,11 @@ from funciones_auxiliares import (
 )
 
 
-def leer_formato_antiguo_de(input_filepath):
+def leer_formato_antiguo_datos_estadisticos(input_filepath):
     print("> Leyendo Procedimientos en Formato Antiguo")
     # Lee la base de procedimiento antiguos
-    ruta_archivos = f"{input_filepath}/formato_antiguo/procedimientos/*.xlsx"
+    ruta_archivos = f"{input_filepath}/procedimientos/formato_antiguo/*.xlsx"
+    print(ruta_archivos)
     df = pd.concat((pd.read_excel(archivo) for archivo in glob.glob(ruta_archivos)))
 
     # Reordena las columnas de la base de datos
@@ -92,11 +93,18 @@ def leer_procedimientos(input_filepath):
     df = df.drop(columns=["rut_paciente"])
 
     # Agrega la columna del anio
-    df["ano"] = pd.to_datetime(df["fecha"]).dt.year
+    df["ano"] = pd.to_datetime(df["fecha"], errors="coerce").dt.year
 
     return df
 
 
 if __name__ == "__main__":
+    # Lee la base de datos de DDEE antigua y la transforma
+    df_antigua = leer_formato_antiguo_datos_estadisticos("data/raw")
+    df_antigua.to_excel(
+        "data/raw/procedimientos/datos_estadisticos_formato_nuevo_2020_2022.xlsx", index=False
+    )
+
+    # Lee el formato nuevo de datos estadisticos
     df = leer_procedimientos("data/raw")
     df.to_csv("data/processed/procedimientos_procesada.csv", index=False)
