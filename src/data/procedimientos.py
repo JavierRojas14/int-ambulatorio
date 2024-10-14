@@ -21,7 +21,6 @@ def leer_formato_antiguo_datos_estadisticos(input_filepath):
     # Reordena las columnas de la base de datos
     df = df[
         [
-            "N°",
             "Columna1",
             "Rut",
             "N°",
@@ -40,8 +39,7 @@ def leer_formato_antiguo_datos_estadisticos(input_filepath):
     ]
 
     # Renombra las columnas para que esten en el nuevo formato
-    df.columns = [
-        "N°",
+    orden_columnas_nuevas = [
         "Servicio Clinico",
         "Rut Paciente",
         "Evento",
@@ -57,9 +55,13 @@ def leer_formato_antiguo_datos_estadisticos(input_filepath):
         "Tipo Atención",
         "Especialidad",
     ]
+    df.columns = orden_columnas_nuevas
 
     # Agrega la cantidad de numero de examenes
-    df["Número de veces"] = 1
+    df = df[orden_columnas_nuevas].value_counts().reset_index(name="Número de veces")
+
+    # Agrega un indicador del procedimientos
+    df = df.reset_index(names="N°")
 
     return df
 
