@@ -113,8 +113,10 @@ def leer_procedimientos(input_filepath):
     # Elimina las columnas de RUTs
     df = df.drop(columns=["rut_paciente"])
 
-    # Agrega la columna del anio
-    df["ano"] = pd.to_datetime(df["fecha"], errors="coerce").dt.year
+    # Formatea la fecha de realizacion del procedimiento y agrega columna de anio
+    df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
+    df["ano"] = df["fecha"].dt.year
+    df = df.sort_values("fecha")
 
     return df
 
