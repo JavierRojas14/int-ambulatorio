@@ -86,10 +86,10 @@ def leer_procedimientos(input_filepath):
     df = clean_column_names(df)
 
     # Limpia los RUTs
-    df["id_paciente"] = unificar_formato_ruts(df["rut"], eliminar_digito_verificador=True)
+    df["id_paciente"] = unificar_formato_ruts(df["rut_paciente"], eliminar_digito_verificador=True)
 
     # Elimina las columnas de RUTs
-    df = df.drop(columns=["rut"])
+    df = df.drop(columns=["rut_paciente"])
 
     # Agrega la columna del anio
     df["ano"] = pd.to_datetime(df["fecha"]).dt.year
