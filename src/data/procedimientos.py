@@ -119,6 +119,18 @@ def leer_procedimientos(input_filepath):
     df["ano"] = df["fecha"].dt.year
     df = df.sort_values("fecha")
 
+    # Limpia las columnas de texto
+    columnas_de_texto_a_limpiar = [
+        "servicio_clinico",
+        "sexo",
+        "previson",
+        "comuna_residencia",
+        "accion_clinica",
+        "tipo_atencion",
+        "especialidad",
+    ]
+    df[columnas_de_texto_a_limpiar] = df[columnas_de_texto_a_limpiar].apply(limpiar_columna_texto)
+
     return df
 
 
