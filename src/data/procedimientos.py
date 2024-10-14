@@ -80,10 +80,10 @@ def leer_procedimientos(input_filepath):
     df = pd.concat((pd.read_excel(archivo) for archivo in glob.glob(ruta_archivos)))
 
     # Elimina las columnas innecesarias
-    df = df.drop(columns=["N°", "Nombre", "Médico"])
+    df = df.drop(columns=["N°", "Nombre", "Nombre Médico"])
 
     # Renombra columna 1
-    df = df.rename(columns={"Columna1": "unidad_que_la_realiza"})
+    # df = df.rename(columns={"Columna1": "unidad_que_la_realiza"})
 
     # Limpia los nombres de las columnas
     df = clean_column_names(df)
@@ -96,6 +96,9 @@ def leer_procedimientos(input_filepath):
 
     # Elimina las columnas de RUTs
     df = df.drop(columns=["rut"])
+
+    # Agrega la columna del anio
+    df["ano"] = pd.to_datetime(df["fecha"]).dt.year
 
     return df
 
