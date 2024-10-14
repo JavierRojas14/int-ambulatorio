@@ -78,6 +78,7 @@ def leer_formato_antiguo_datos_estadisticos(input_filepath):
             "Accion Clinica",
             "Tipo Atención",
             "Especialidad",
+            "Número de veces",
         ]
     ]
 
