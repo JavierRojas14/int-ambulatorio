@@ -15,7 +15,6 @@ def leer_formato_antiguo_datos_estadisticos(input_filepath):
     print("> Leyendo Procedimientos en Formato Antiguo")
     # Lee la base de procedimiento antiguos
     ruta_archivos = f"{input_filepath}/procedimientos/formato_antiguo/*.xlsx"
-    print(ruta_archivos)
     df = pd.concat((pd.read_excel(archivo) for archivo in glob.glob(ruta_archivos)))
 
     # Reordena las columnas de la base de datos
