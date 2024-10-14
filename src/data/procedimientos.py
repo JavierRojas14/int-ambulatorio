@@ -82,14 +82,8 @@ def leer_procedimientos(input_filepath):
     # Elimina las columnas innecesarias
     df = df.drop(columns=["N°", "Nombre", "Nombre Médico"])
 
-    # Renombra columna 1
-    # df = df.rename(columns={"Columna1": "unidad_que_la_realiza"})
-
     # Limpia los nombres de las columnas
     df = clean_column_names(df)
-
-    # Solamente deja los procedimientos de atencion abierta
-    # df = df.query("cerradoabierto == 'ABIERTA'").copy()
 
     # Limpia los RUTs
     df["id_paciente"] = unificar_formato_ruts(df["rut"], eliminar_digito_verificador=True)
