@@ -76,3 +76,7 @@ def unificar_formato_ruts(columna_ruts: pd.Series, eliminar_digito_verificador=T
     ruts_limpios = ruts_limpios.str.rstrip("K")
 
     return ruts_limpios
+
+
+def limpiar_columna_texto(serie):
+    return serie.str.upper().str.strip()

@@ -7,6 +7,7 @@ import pandas as pd
 from funciones_auxiliares import (
     clean_column_names,
     decorador_tiempo,
+    limpiar_columna_texto,
     unificar_formato_ruts,
 )
 
