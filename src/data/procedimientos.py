@@ -11,6 +11,58 @@ from funciones_auxiliares import (
 )
 
 
+def leer_formato_antiguo_de(input_filepath):
+    print("> Leyendo Procedimientos en Formato Antiguo")
+    # Lee la base de procedimiento antiguos
+    ruta_archivos = f"{input_filepath}/formato_antiguo/procedimientos/*.xlsx"
+    df = pd.concat((pd.read_excel(archivo) for archivo in glob.glob(ruta_archivos)))
+
+    # Reordena las columnas de la base de datos
+    df = df[
+        [
+            "N°",
+            "Columna1",
+            "Rut",
+            "N°",
+            "Nombre",
+            "Sexo",
+            "Edad",
+            "Previsión",
+            "Comuna Residencia",
+            "Fecha Realización",
+            "Médico",
+            "COD",
+            "Glosa",
+            "Cerrado/Abierto",
+            "Subtipo",
+        ]
+    ]
+
+    # Renombra las columnas para que esten en el nuevo formato
+    df.columns = [
+        "N°",
+        "Servicio Clinico",
+        "Rut Paciente",
+        "Evento",
+        "Nombre",
+        "Sexo",
+        "Edad",
+        "Previsón",
+        "Comuna Residencia",
+        "Fecha",
+        "Nombre Médico",
+        "Codigo Accion Clinica",
+        "Accion Clinica",
+        "Tipo Atención",
+        "Especialidad",
+    ]
+
+    # Agrega la cantidad de numero de examenes
+    df["Número de veces"] = 1
+
+    return df
+
+
 @decorador_tiempo
 def leer_procedimientos(input_filepath):
     """
