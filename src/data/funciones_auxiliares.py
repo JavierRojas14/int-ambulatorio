@@ -79,4 +79,10 @@ def unificar_formato_ruts(columna_ruts: pd.Series, eliminar_digito_verificador=T
 
 
 def limpiar_columna_texto(serie):
-    return serie.str.upper().str.strip()
+    return (
+        serie.str.upper()
+        .str.strip()
+        .str.normalize("NFD")
+        .str.encode("ascii", "ignore")
+        .str.decode("utf-8")
+    )
