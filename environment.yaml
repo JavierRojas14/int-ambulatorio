@@ -16,4 +16,5 @@ dependencies:
   - seaborn=0.12.2
   - plotly=5.23.0
   - nbformat
+  - scikit-learn
 prefix: /opt/anaconda3/envs/int-ambulatorio
