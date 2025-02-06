@@ -4,6 +4,7 @@ import pandas as pd
 from funciones_auxiliares import (
     clean_column_names,
     decorador_tiempo,
+    limpiar_columna_texto,
     unificar_formato_ruts,
 )
 
@@ -164,6 +165,9 @@ def leer_trackcare(input_filepath):
         .replace(GLOSAS_CONSULTAS_MISCALENEAS, "Miscaleneo")
     )
 
+    # Limpia la columna de las prestacion
+    df["prestacion"] = limpiar_columna_texto(df["prestacion"])
+
     # Agrega columna de especialidades renombradas
     df["especialidad"] = df["especialidad"].str.strip()
     df = agrupar_especialidades(df)
@@ -229,6 +233,9 @@ def leer_trackcare_nuevo_formato(input_filepath):
 
     # Agrega una columna del rangio etario
     df["rango_etario"] = pd.cut(df.edad, bins=range(0, 151, 10))
+
+    # Limpia la columna de las prestacion
+    df["prestacion"] = limpiar_columna_texto(df["prestacion"])
 
     # Reemplaza valores en las columnas comuna y tipoatencion
     df["comuna"] = df["comuna"].replace(CAMBIO_COMUNA_TRACKCARE)
