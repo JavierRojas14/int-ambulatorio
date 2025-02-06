@@ -153,7 +153,7 @@ def leer_trackcare(input_filepath):
 
     # Reemplaza valores en las columnas comuna y tipoatencion
     df["comuna"] = df["comuna"].replace(CAMBIO_COMUNA_TRACKCARE)
-    df["tipoatencion_formateada"] = (
+    df["tipoatencion"] = (
         df["tipoatencion"]
         .replace(GLOSAS_CONSULTAS_NUEVAS, "Consulta Nueva")
         .replace(GLOSAS_CONSULTAS_REPETIDAS, "Consulta Repetida")
@@ -226,7 +226,7 @@ def leer_trackcare_nuevo_formato(input_filepath):
 
     # Reemplaza valores en las columnas comuna y tipoatencion
     df["comuna"] = df["comuna"].replace(CAMBIO_COMUNA_TRACKCARE)
-    df["tipoatencion_formateada"] = (
+    df["tipoatencion"] = (
         df["tipoatencion"]
         .replace(GLOSAS_CONSULTAS_NUEVAS, "Consulta Nueva")
         .replace(GLOSAS_CONSULTAS_REPETIDAS, "Consulta Repetida")
