@@ -145,6 +145,9 @@ def leer_trackcare(input_filepath):
     # Agrega columna de anio
     df["ano"] = df["hora_completa_cita"].dt.year
 
+    # Corrige la hora de la cita a un formato comun
+    df["horacita"] = df["hora_completa_cita"].dt.strftime("%d/%m/%Y")
+
     # Formatea el id del paciente
     df["id_paciente"] = unificar_formato_ruts(df["papmiid"], eliminar_digito_verificador=True)
 
@@ -209,6 +212,9 @@ def leer_trackcare_nuevo_formato(input_filepath):
 
     # Agrega una columna de la fecha y hora de la atencion
     df["hora_completa_cita"] = fecha_y_hora_completa
+
+    # Corrige la hora de la cita a un formato comun
+    df["horacita"] = df["hora_completa_cita"].dt.strftime("%d/%m/%Y")
 
     # Agrega columna de anio
     df["ano"] = df["hora_completa_cita"].dt.year
