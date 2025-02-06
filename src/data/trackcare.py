@@ -215,6 +215,11 @@ def leer_trackcare_nuevo_formato(input_filepath):
     # Formatea el id del paciente
     df["id_paciente"] = unificar_formato_ruts(df["rut"], eliminar_digito_verificador=True)
 
+    # Formatea la edad
+    edad_en_str = df["edad"].str.split("a").str[0]
+    edad_formateada = edad_en_str.combine_first(df["edad"]).astype(int)
+    df["edad"] = edad_formateada
+
     # Agrega una columna del rangio etario
     df["rango_etario"] = pd.cut(df.edad, bins=range(0, 151, 10))
 
