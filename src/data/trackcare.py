@@ -247,7 +247,8 @@ def leer_trackcare_nuevo_formato(input_filepath):
 
 
 if __name__ == "__main__":
-    # df_track = leer_trackcare("data/raw")
-    # df_track.to_csv("data/processed/trackcare_procesada.csv", index=False)
-
+    df_track = leer_trackcare("data/raw")
     df_track_nuevo = leer_trackcare_nuevo_formato("data/raw")
+
+    df_track_final = pd.concat([df_track, df_track_nuevo])
+    df_track_final.to_csv("data/processed/trackcare_procesada.csv", index=False)
