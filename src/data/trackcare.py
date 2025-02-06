@@ -25,6 +25,24 @@ COLUMNAS_UTILES_TRACKCARE = [
     "TipoProfesional",
 ]
 
+COLUMNAS_UTILES_TRACKCARE_FORMATO_NUEVO = [
+    "Rut",
+    "Sexo",
+    "Edad",
+    "Comuna",
+    "Provincia",
+    "Region",
+    "PrevisionEpisodio",
+    "PlanEpisodio",
+    "Prestacion",
+    "TipoAtencion",
+    "FechaCita",
+    "HoraCita",
+    "EstadoCita",
+    "Especialidad",
+    "TipoProfesional",
+]
+
 CAMBIO_COMUNA_TRACKCARE = {
     "Maipú": "MAIPU",
     "Chillán": "CHILLAN",
@@ -165,6 +183,66 @@ def agrupar_especialidades(df):
     return tmp
 
 
+def leer_trackcare_nuevo_formato(input_filepath):
+    print("> Leyendo TrackCare nuevo formato")
+    # Lee las bases de datos
+    ruta_archivos = f"{input_filepath}/trackcare/formato_nuevo/*.xlsx"
+    df = pd.concat(
+        (pd.read_excel(archivo, usecols=COLUMNAS_UTILES_TRACKCARE_FORMATO_NUEVO))
+        for archivo in glob.glob(ruta_archivos)
+    )
+
+    # Limpia el nombre de las columnas
+    df = clean_column_names(df)
+
+    # Formatea la fecha y la hora
+    fecha_formateada = df["fechacita"].astype(str)
+
+    hora_formateada = df["horacita"].astype(str).fillna("00:00:00").str.split(":")
+    hora_formateada = hora_formateada.str[0] + ":" + hora_formateada.str[1] + ":00"
+
+    # Completa la hora
+    fecha_y_hora_completa = pd.to_datetime(
+        fecha_formateada + " " + hora_formateada, format="%Y-%m-%d %H:%M:%S"
+    )
+
+    # Agrega una columna de la fecha y hora de la atencion
+    df["hora_completa_cita"] = fecha_y_hora_completa
+
+    # Agrega columna de anio
+    df["ano"] = df["hora_completa_cita"].dt.year
+
+    # Formatea el id del paciente
+    df["id_paciente"] = unificar_formato_ruts(df["rut"], eliminar_digito_verificador=True)
+
+    # Agrega una columna del rangio etario
+    df["rango_etario"] = pd.cut(df.edad, bins=range(0, 151, 10))
+
+    # Reemplaza valores en las columnas comuna y tipoatencion
+    df["comuna"] = df["comuna"].replace(CAMBIO_COMUNA_TRACKCARE)
+    df["tipoatencion"] = (
+        df["tipoatencion"]
+        .replace(GLOSAS_CONSULTAS_NUEVAS, "Consulta Nueva")
+        .replace(GLOSAS_CONSULTAS_REPETIDAS, "Consulta Repetida")
+        .replace(GLOSAS_CONSULTAS_PROCEDIMIENTOS, "Procedimiento")
+        .replace(GLOSAS_CONSULTAS_MISCALENEAS, "Miscaleneo")
+    )
+
+    # Agrega columna de especialidades renombradas
+    df["especialidad"] = df["especialidad"].str.strip()
+    df = agrupar_especialidades(df)
+
+    # Elimina el RUT de la persona
+    df = df.drop(columns=["rut"])
+
+    # Renombra las columnas
+    df = df.rename(columns={"previsionepisodio": "prevision", "planepisodio": "plan"})
+
+    return df
+
+
 if __name__ == "__main__":
-    df_track = leer_trackcare("data/raw")
-    df_track.to_csv("data/processed/trackcare_procesada.csv", index=False)
+    # df_track = leer_trackcare("data/raw")
+    # df_track.to_csv("data/processed/trackcare_procesada.csv", index=False)
+
+    df_track_nuevo = leer_trackcare_nuevo_formato("data/raw")
