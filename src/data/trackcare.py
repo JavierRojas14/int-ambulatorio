@@ -166,5 +166,5 @@ def agrupar_especialidades(df):
 
 
 if __name__ == "__main__":
-    df = leer_trackcare("data/raw")
-    df.to_csv("data/processed/trackcare_procesada.csv", index=False)
+    df_track = leer_trackcare("data/raw")
+    df_track.to_csv("data/processed/trackcare_procesada.csv", index=False)
